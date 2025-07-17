@@ -3,13 +3,10 @@ package hoops.metrics.api.domain.jogador;
 import hoops.metrics.api.domain.clube.Clube;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
 
 import java.time.LocalDate;
 
@@ -25,23 +22,19 @@ public class Jogador {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
     private String nome;
 
     @Enumerated(EnumType.STRING)
     private Posicao posicao;
 
-    @NotNull
     private int altura;
 
-    @NotNull
     private float peso;
 
-    @NotNull
     private LocalDate data_nascimento;
 
     @ManyToOne
-    @JoinColumn(name = "clube_id") // opcional: define o nome da coluna FK
+    @JoinColumn(name = "clube_id")
     private Clube clube;
 
     private Boolean ativo;

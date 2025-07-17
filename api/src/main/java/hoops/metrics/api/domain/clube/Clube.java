@@ -1,13 +1,17 @@
 package hoops.metrics.api.domain.clube;
 
+import hoops.metrics.api.domain.jogador.Jogador;
 import hoops.metrics.api.domain.tecnico.Tecnico;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Table(name = "clubes")
 @Entity(name = "Clube")
@@ -17,26 +21,25 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(of = "id")
 public class Clube {
 
+//    @OneToMany(mappedBy = "clube")
+//    private List<Jogador> jogadores;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
     private String nome;
 
-    @NotBlank
     private String sigla;
 
-    @NotBlank
     private String cidade;
 
-    @NotBlank
     private String estado;
 
     private Boolean ativo;
 
-    @ManyToOne
-    @JoinColumn(name = "tecnico_id")
+    @OneToOne
+    @JoinColumn(name = "tecnico_id", unique = true)
     private Tecnico tecnico;
 
     public Clube(@Valid DadosCadastroClube dados) {
@@ -48,6 +51,9 @@ public class Clube {
         this.estado = dados.estado();
         this.tecnico = dados.tecnico();
 
+    }
+
+    public Clube(@NotNull Long aLong) {
     }
 
     public void atualizarInformacoes(@Valid DadosAtualizacaoClube dados) {
