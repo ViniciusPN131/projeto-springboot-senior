@@ -31,6 +31,15 @@ public class JogadorController {
 
     }
 
+    @GetMapping
+    public ResponseEntity<Page<DadosListagemJogador>> listarJogadores(@PageableDefault(size = 10, sort = {"nome"}) Pageable paginacao){
+
+        var page = jogadorRepository.findAll(paginacao).map(DadosListagemJogador::new);
+
+        return  ResponseEntity.ok(page);
+
+    }
+
     @PutMapping
     @Transactional
     public ResponseEntity atualizarJogador(@RequestBody @Valid DadosAtualizacaoJogador dados){
@@ -50,15 +59,6 @@ public class JogadorController {
         jogador.excluir();
 
         return ResponseEntity.noContent().build();
-
-    }
-
-    @GetMapping
-    public ResponseEntity<Page<DadosListagemJogador>> listarJogadores(@PageableDefault(size = 10, sort = {"nome"}) Pageable paginacao){
-
-        var page = jogadorRepository.findAll(paginacao).map(DadosListagemJogador::new);
-
-        return  ResponseEntity.ok(page);
 
     }
 

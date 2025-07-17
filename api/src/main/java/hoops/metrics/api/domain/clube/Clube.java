@@ -1,5 +1,6 @@
 package hoops.metrics.api.domain.clube;
 
+import hoops.metrics.api.domain.tecnico.Tecnico;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -16,7 +17,8 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(of = "id")
 public class Clube {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotBlank
@@ -31,12 +33,51 @@ public class Clube {
     @NotBlank
     private String estado;
 
+    private Boolean ativo;
+
+    @ManyToOne
+    @JoinColumn(name = "tecnico_id")
+    private Tecnico tecnico;
+
     public Clube(@Valid DadosCadastroClube dados) {
 
+        this.ativo = true;
         this.nome = dados.nome();
         this.sigla = dados.sigla();
         this.cidade = dados.cidade();
         this.estado = dados.estado();
+        this.tecnico = dados.tecnico();
+
+    }
+
+    public void atualizarInformacoes(@Valid DadosAtualizacaoClube dados) {
+
+        if (dados.nome() != null && !dados.nome().isBlank()) {
+            this.nome = dados.nome();
+        }
+
+        if (dados.sigla() != null && !dados.sigla().isBlank()) {
+            this.sigla = dados.sigla();
+        }
+
+        if (dados.cidade() != null && !dados.cidade().isBlank()) {
+            this.cidade = dados.cidade();
+        }
+
+        if (dados.estado() != null && !dados.estado().isBlank()) {
+            this.estado = dados.estado();
+        }
+
+        if (dados.tecnico()!=null){
+            this.tecnico = dados.tecnico();
+        }
+
+
+    }
+
+    public void excluir() {
+
+        this.ativo = false;
 
     }
 }

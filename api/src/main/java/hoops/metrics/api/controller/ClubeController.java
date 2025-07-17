@@ -1,7 +1,9 @@
 package hoops.metrics.api.controller;
 
 import hoops.metrics.api.domain.clube.*;
-import hoops.metrics.api.domain.jogador.DadosListagemJogador;
+import hoops.metrics.api.domain.clube.DadosAtualizacaoClube;
+import hoops.metrics.api.domain.clube.DadosDetalhamentoClube;
+import hoops.metrics.api.domain.clube.DadosListagemClube;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -35,10 +37,34 @@ public class ClubeController {
     @GetMapping
     public ResponseEntity<Page<DadosListagemClube>> listarClubes(@PageableDefault(size = 10, sort = {"nome"}) Pageable paginacao){
 
-        var page = repository.findAll(paginacao).map(DadosListagemClube::new);
+        var page = repository.findAllByAtivoTrue(paginacao).map(DadosListagemClube::new);
 
         return  ResponseEntity.ok(page);
 
     }
+
+    @PutMapping
+    @Transactional
+    public ResponseEntity atualizarClube(@RequestBody @Valid DadosAtualizacaoClube dados){
+
+        var clube = repository.getReferenceById(dados.id());
+        clube.atualizarInformacoes(dados);
+
+        return ResponseEntity.ok(new DadosDetalhamentoClube(clube));
+
+    }
+
+    @DeleteMapping("/{id}")
+    @Transactional
+    public ResponseEntity deletarClube(@PathVariable Long id){
+
+        var clube = repository.getReferenceById(id);
+        clube.excluir();
+
+        return ResponseEntity.noContent().build();
+
+    }
+
+    
 
 }
