@@ -1,5 +1,6 @@
 package hoops.metrics.api.controller;
 
+import hoops.metrics.api.domain.clube.ClubeRepository;
 import hoops.metrics.api.domain.jogador.*;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,12 +18,21 @@ public class JogadorController {
 
     @Autowired
     private JogadorRepository jogadorRepository;
-    private JogadorRepository clubeRepository;
+
+    @Autowired
+    private ClubeRepository clubeRepository;
+
+    @Autowired
+    private JogadorService jogadorService;
 
     @PostMapping
     @Transactional
-    public ResponseEntity cadastrarJogador(@RequestBody @Valid DadosCadastroJogador dados, UriComponentsBuilder uriBuilder){
+    public ResponseEntity cadastrarJogador(@RequestBody @Valid DadosPostJogador dadosPost, UriComponentsBuilder uriBuilder){
+
+        var dados = jogadorService.validarJogador(dadosPost);
+
         var jogador = new Jogador(dados);
+
         jogadorRepository.save(jogador);
 
         var uri = uriBuilder.path("/jogadores/{id}").buildAndExpand(jogador.getId()).toUri();

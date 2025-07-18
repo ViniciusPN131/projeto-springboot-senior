@@ -4,6 +4,9 @@ import hoops.metrics.api.domain.clube.*;
 import hoops.metrics.api.domain.clube.DadosAtualizacaoClube;
 import hoops.metrics.api.domain.clube.DadosDetalhamentoClube;
 import hoops.metrics.api.domain.clube.DadosListagemClube;
+import hoops.metrics.api.domain.tecnico.Tecnico;
+import hoops.metrics.api.domain.tecnico.TecnicoRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -19,25 +22,34 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class ClubeController {
 
     @Autowired
-    private ClubeRepository repository;
+    private ClubeRepository clubeRepository;
+
+    @Autowired
+    private TecnicoRepository tecnicoRepository;
 
     @PostMapping
     @Transactional
     public ResponseEntity cadastrarClube(@RequestBody @Valid DadosCadastroClube dados, UriComponentsBuilder uriBuilder){
 
-        var clube = new Clube(dados);
-        repository.save(clube);
+        var tecnico = tecnicoRepository.findById(dados.tecnico_id())
+                .orElseThrow(() -> new EntityNotFoundException("Técnico não encontrado"));
 
-        var uri = uriBuilder.path("/medicos/{id}").buildAndExpand(clube.getId()).toUri();
+        var clube = new Clube(dados);
+        clube.setTecnico(tecnico);
+
+        clubeRepository.save(clube);
+
+        var uri = uriBuilder.path("/clubes/{id}").buildAndExpand(clube.getId()).toUri();
 
         return ResponseEntity.created(uri).body(new DadosDetalhamentoClube(clube));
+
 
     }
 
     @GetMapping
     public ResponseEntity<Page<DadosListagemClube>> listarClubes(@PageableDefault(size = 10, sort = {"nome"}) Pageable paginacao){
 
-        var page = repository.findAllByAtivoTrue(paginacao).map(DadosListagemClube::new);
+        var page = clubeRepository.findAllByAtivoTrue(paginacao).map(DadosListagemClube::new);
 
         return  ResponseEntity.ok(page);
 
@@ -47,7 +59,7 @@ public class ClubeController {
     @Transactional
     public ResponseEntity atualizarClube(@RequestBody @Valid DadosAtualizacaoClube dados){
 
-        var clube = repository.getReferenceById(dados.id());
+        var clube = clubeRepository.getReferenceById(dados.id());
         clube.atualizarInformacoes(dados);
 
         return ResponseEntity.ok(new DadosDetalhamentoClube(clube));
@@ -58,7 +70,7 @@ public class ClubeController {
     @Transactional
     public ResponseEntity deletarClube(@PathVariable Long id){
 
-        var clube = repository.getReferenceById(id);
+        var clube = clubeRepository.getReferenceById(id);
         clube.excluir();
 
         return ResponseEntity.noContent().build();

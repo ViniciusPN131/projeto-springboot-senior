@@ -6,10 +6,7 @@ import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
@@ -40,6 +37,7 @@ public class Clube {
 
     @OneToOne
     @JoinColumn(name = "tecnico_id", unique = true)
+    @Setter
     private Tecnico tecnico;
 
     public Clube(@Valid DadosCadastroClube dados) {
