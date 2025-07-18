@@ -1,1 +1,0 @@
-ALTER TABLE times RENAME TO clubes;
