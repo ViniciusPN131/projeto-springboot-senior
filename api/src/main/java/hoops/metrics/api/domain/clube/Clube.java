@@ -18,9 +18,6 @@ import java.util.List;
 @EqualsAndHashCode(of = "id")
 public class Clube {
 
-//    @OneToMany(mappedBy = "clube")
-//    private List<Jogador> jogadores;
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
