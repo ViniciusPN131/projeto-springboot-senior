@@ -2,7 +2,7 @@ package hoops.metrics.api.domain.estatisticas;
 
 public record DadosDetalhamentoEstatistica(
         Long id,
-        String jogador,
+        Long jogadorId,
         Long partidaId,
         int totalPontos,
         int totalFaltas,
@@ -14,7 +14,7 @@ public record DadosDetalhamentoEstatistica(
     public DadosDetalhamentoEstatistica(hoops.metrics.api.domain.estatisticas.Estatistica estatistica) {
         this(
                 estatistica.getId(),
-                estatistica.getJogador().getNome(),
+                estatistica.getJogador().getId(),
                 estatistica.getPartida().getId(),
                 estatistica.getTotalPontos(),
                 estatistica.getTotalFaltas(),

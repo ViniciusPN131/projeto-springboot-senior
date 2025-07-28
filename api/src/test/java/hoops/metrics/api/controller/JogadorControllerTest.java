@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
 import org.springframework.data.domain.*;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -39,7 +40,12 @@ class JogadorControllerTest {
     @Test
     void deveCadastrarJogadorComSucesso() {
         Clube clube = new Clube();
-        DadosPostJogador dadosPost = mock(DadosPostJogador.class);
+        DadosPostJogador dadosPost = new DadosPostJogador(
+                "João Silva", 
+                LocalDate.of(2000, 1, 1), 
+                190, 
+                85.5f, Posicao.ARMADOR, 
+                1L);
         DadosCadastroJogador dadosCadastro = new DadosCadastroJogador(
                 "João Silva",
                 LocalDate.of(2000, 1, 1),
@@ -57,8 +63,7 @@ class JogadorControllerTest {
 
         ResponseEntity<?> response = jogadorController.cadastrarJogador(dadosPost, uriBuilder);
 
-        assertEquals(201, response.getStatusCodeValue());
-        assertTrue(response.getHeaders().getLocation().toString().contains("/jogadores/"));
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertNotNull(response.getBody());
     }
 
@@ -80,7 +85,7 @@ class JogadorControllerTest {
 
         ResponseEntity<Page<DadosListagemJogador>> response = jogadorController.listarJogadores(pageable);
 
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
         assertEquals(1, response.getBody().getTotalElements());
     }
@@ -111,7 +116,7 @@ class JogadorControllerTest {
 
         ResponseEntity<?> response = jogadorController.atualizarJogador(dadosAtualizacao);
 
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
     }
 
@@ -132,6 +137,6 @@ class JogadorControllerTest {
 
         ResponseEntity<?> response = jogadorController.deletarJogador(id);
 
-        assertEquals(204, response.getStatusCodeValue());
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
     }
 }

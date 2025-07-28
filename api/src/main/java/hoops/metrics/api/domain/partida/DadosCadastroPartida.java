@@ -1,11 +1,13 @@
 package hoops.metrics.api.domain.partida;
 
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Past;
+
 import java.time.LocalDateTime;
 
 public record DadosCadastroPartida(
         @NotNull Long timeCasaId,
         @NotNull Long timeVisitanteId,
-        @NotNull LocalDateTime dataHora,
+        @NotNull @Past LocalDateTime dataHora,
         @NotNull String local
 ) {}

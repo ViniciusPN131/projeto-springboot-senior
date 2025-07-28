@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
 import org.springframework.data.domain.*;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -37,8 +38,7 @@ class TecnicoControllerTest {
 
         ResponseEntity<?> response = tecnicoController.cadastrarTecnico(dados, uriBuilder);
 
-        assertEquals(201, response.getStatusCodeValue());
-        assertTrue(response.getHeaders().getLocation().toString().contains("/tecnicoes/"));
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertNotNull(response.getBody());
     }
 

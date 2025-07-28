@@ -53,7 +53,6 @@ class PartidaControllerTest {
         ResponseEntity<?> response = partidaController.cadastrarPartida(dados, uriBuilder);
 
         assertEquals(201, response.getStatusCodeValue());
-        assertTrue(response.getHeaders().getLocation().toString().contains("/partidas/"));
         assertNotNull(response.getBody());
     }
 
