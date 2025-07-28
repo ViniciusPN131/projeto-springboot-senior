@@ -9,8 +9,6 @@ public record DadosCadastroTecnico(
 
         @NotBlank
         String nome
-//        @NotNull @Valid
-//        Clube clube
 
 ) {
 }

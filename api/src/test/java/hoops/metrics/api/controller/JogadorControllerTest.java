@@ -54,10 +54,8 @@ class JogadorControllerTest {
                 Posicao.ARMADOR,
                 clube
         );
-        Jogador jogador = new Jogador(dadosCadastro);
 
         when(jogadorService.validarJogador(dadosPost)).thenReturn(dadosCadastro);
-        when(jogadorRepository.save(any(Jogador.class))).thenReturn(jogador);
 
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString("http://localhost");
 

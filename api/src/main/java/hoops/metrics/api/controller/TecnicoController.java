@@ -26,7 +26,7 @@ public class TecnicoController {
         var tecnico = new Tecnico(dados);
         tecnicoRepository.save(tecnico);
 
-        var uri = uriBuilder.path("/tecnicos/{id}").buildAndExpand(tecnico.getId()).toUri();
+        var uri = uriBuilder.path("/tecnicos").buildAndExpand(tecnico.getId()).toUri();
 
         return ResponseEntity.created(uri).body(new DadosDetalhamentoTecnico(tecnico));
 
