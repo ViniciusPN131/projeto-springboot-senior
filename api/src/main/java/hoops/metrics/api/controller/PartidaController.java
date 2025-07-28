@@ -57,4 +57,11 @@ public class PartidaController {
         partida.excluir();
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/resultado/{partidaId}")
+    public ResponseEntity<DadosResultadoPartida> buscarResultadoDaPartida(@PathVariable Long partidaId) {
+        var resultado = partidaRepository.buscarResultadosPartidas(partidaId);
+        return ResponseEntity.ok(resultado);
+    }
+
 }

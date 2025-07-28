@@ -32,15 +32,8 @@ public class TecnicoController {
 
     }
 
-    @GetMapping("/{id}/vitorias")
-    public ResponseEntity<Long> buscarVitoriasDoTecnico(@PathVariable Long id) {
-        Long vitorias = tecnicoRepository.vitoriasDoTecnico(id);
-        return ResponseEntity.ok(vitorias);
-    }
-
-
     @GetMapping
-    public ResponseEntity<Page<DadosListagemTecnico>> listarTecnicoes(@PageableDefault(size = 10, sort = {"nome"}) Pageable paginacao){
+    public ResponseEntity<Page<DadosListagemTecnico>> listarTecnicoes(@PageableDefault(size = 10, sort = {"id"}) Pageable paginacao){
 
         var page = tecnicoRepository.findAllByAtivoTrue(paginacao).map(DadosListagemTecnico::new);
 
@@ -68,6 +61,12 @@ public class TecnicoController {
 
         return ResponseEntity.noContent().build();
 
+    }
+
+    @GetMapping("/tecnico/vitorias/{tecnicoId}")
+    public ResponseEntity<Long> contarVitoriasPorTecnico(@PathVariable Long tecnicoId) {
+        var total = tecnicoRepository.contarVitoriasPorTecnico(tecnicoId);
+        return ResponseEntity.ok(total);
     }
     
 }

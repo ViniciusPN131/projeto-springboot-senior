@@ -13,27 +13,38 @@ public interface TecnicoRepository extends JpaRepository<Tecnico, Long> {
     Page<Tecnico> findAllByAtivoTrue(Pageable paginacao);
 
     @Query(value = """
-    SELECT COUNT(*) 
-    FROM partidas p
-    JOIN clubes c ON c.id = p.clube_mandante_id OR c.id = p.clube_visitante_id
-    WHERE c.tecnico_id = :id
-    AND (
-        (
-            SELECT SUM(e1.total_pontos)
-            FROM estatisticas e1
-            JOIN jogadores j1 ON e1.jogador_id = j1.id
-            WHERE j1.clube_id = c.id AND e1.partida_id = p.id
-        ) >
-        (
-            SELECT SUM(e2.total_pontos)
-            FROM estatisticas e2
-            JOIN jogadores j2 ON e2.jogador_id = j2.id
-            WHERE j2.clube_id != c.id AND e2.partida_id = p.id
-        )
-    )
-""", nativeQuery = true)
-    Long vitoriasDoTecnico(@Param("id") Long id);
-
-
+                SELECT COUNT(*) FROM partidas p
+                JOIN clubes cm ON cm.id = p.clube_mandante_id
+                JOIN clubes cv ON cv.id = p.clube_visitante_id
+                WHERE (
+                    cm.tecnico_id = :tecnicoId AND
+                    (
+                        (SELECT COALESCE(SUM(e1.total_pontos), 0)
+                         FROM estatisticas e1
+                         JOIN jogadores j1 ON j1.id = e1.jogador_id
+                         WHERE e1.partida_id = p.id AND j1.clube_id = cm.id)
+                        >
+                        (SELECT COALESCE(SUM(e2.total_pontos), 0)
+                         FROM estatisticas e2
+                         JOIN jogadores j2 ON j2.id = e2.jogador_id
+                         WHERE e2.partida_id = p.id AND j2.clube_id = cv.id)
+                    )
+                )
+                OR (
+                    cv.tecnico_id = :tecnicoId AND
+                    (
+                        (SELECT COALESCE(SUM(e1.total_pontos), 0)
+                         FROM estatisticas e1
+                         JOIN jogadores j1 ON j1.id = e1.jogador_id
+                         WHERE e1.partida_id = p.id AND j1.clube_id = cv.id)
+                        >
+                        (SELECT COALESCE(SUM(e2.total_pontos), 0)
+                         FROM estatisticas e2
+                         JOIN jogadores j2 ON j2.id = e2.jogador_id
+                         WHERE e2.partida_id = p.id AND j2.clube_id = cm.id)
+                    )
+                )
+            """, nativeQuery = true)
+    Long contarVitoriasPorTecnico(@Param("tecnicoId") Long tecnicoId);
 
 }

@@ -1,6 +1,8 @@
 package hoops.metrics.api.controller;
 
 import hoops.metrics.api.domain.clube.ClubeRepository;
+import hoops.metrics.api.domain.estatisticas.DadosGeraisEstatistica;
+import hoops.metrics.api.domain.estatisticas.Estatistica;
 import hoops.metrics.api.domain.jogador.*;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("jogadores")
@@ -70,6 +74,20 @@ public class JogadorController {
 
         return ResponseEntity.noContent().build();
 
+    }
+
+    @GetMapping("/jogador/mvp/{partidaId}")
+    public ResponseEntity<List<Estatistica>> buscarMvpDaPartida(@PathVariable Long partidaId) {
+        var mvps = jogadorRepository.buscarMvpDaPartida(partidaId);
+        return ResponseEntity.ok(mvps);
+    }
+
+    @GetMapping("/jogador/geral/{jogadorId}")
+    public ResponseEntity<DadosGeraisEstatistica> estatisticasGeraisPorJogador(@PathVariable Long jogadorId) {
+        DadosGeraisEstatistica resultado = jogadorRepository.estatisticasGeraisPorJogador(jogadorId);
+        var jogador = jogadorRepository.findById(jogadorId).orElseThrow(() -> new RuntimeException("Jogador não encontrado"));
+
+        return ResponseEntity.ok(resultado);
     }
 
 }

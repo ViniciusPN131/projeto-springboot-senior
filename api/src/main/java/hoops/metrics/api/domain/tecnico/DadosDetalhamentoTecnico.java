@@ -10,7 +10,6 @@ public record DadosDetalhamentoTecnico(Long id, String nome) {
         this(
                 tecnico.getId(),
                 tecnico.getNome()
-//                tecnico.getClube()
         );
 
     }
