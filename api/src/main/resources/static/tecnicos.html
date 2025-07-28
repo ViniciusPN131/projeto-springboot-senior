@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Técnicos de Basquete</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    body {
+      background-color: #f5f5f5;
+      min-height: 100vh;
+      background: url('https://images.unsplash.com/photo-1546519638-68e109498ffc?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80') no-repeat center center fixed;
+      background-size: cover;
+      position: relative;
+      padding: 20px;
+    }
+    
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 0;
+    }
+    
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 30px;
+      background-color: rgba(255, 255, 255, 0.9);
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      position: relative;
+      z-index: 1;
+      border: 3px solid #ff5e14;
+    }
+    
+    h1 {
+      color: #2c3e50;
+      margin-bottom: 30px;
+      font-size: 2.2rem;
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-weight: 800;
+    }
+    
+    h1 i {
+      color: #ff5e14;
+      margin: 0 10px;
+    }
+    
+    .tecnicos-list {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 15px;
+    }
+    
+    .tecnico-card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      border-left: 5px solid #ff5e14;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    
+    .tecnico-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+      background: linear-gradient(90deg, rgba(255,255,255,0.95) 0%, rgba(255,94,20,0.1) 100%);
+    }
+    
+    .tecnico-nome {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #2c3e50;
+      text-align: center;
+    }
+    
+    .erro {
+      color: #e74c3c;
+      text-align: center;
+      padding: 20px;
+      font-weight: bold;
+      background-color: rgba(255, 255, 255, 0.9);
+      border-radius: 5px;
+      margin-top: 20px;
+    }
+    
+    .voltar-btn {
+      display: inline-block;
+      margin-top: 30px;
+      padding: 12px 25px;
+      background: linear-gradient(45deg, #2c3e50, #34495e);
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      font-weight: bold;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+    }
+    
+    .voltar-btn:hover {
+      background: linear-gradient(45deg, #34495e, #2c3e50);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    
+    @media (max-width: 768px) {
+      .container {
+        padding: 20px;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+  <div class="container">
+    <h1>
+      <i class="fas fa-basketball-ball"></i>
+      Técnicos de Basquete
+      <i class="fas fa-basketball-ball"></i>
+    </h1>
+    
+    <div class="tecnicos-list" id="lista-tecnicos"></div>
+    <p class="erro" id="mensagem-erro" style="display: none;"></p>
+    
+    <button class="voltar-btn" onclick="window.location.href='index.html'">
+      <i class="fas fa-arrow-left"></i> Voltar
+    </button>
+  </div>
+
+  <script>
+    const url = 'http://localhost:8080/tecnicos';
+
+    fetch(url)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Erro ao buscar os técnicos');
+        }
+        return response.json();
+      })
+      .then(data => {
+        const lista = document.getElementById('lista-tecnicos');
+        
+        if (data.content && data.content.length > 0) {
+          data.content.forEach(tecnico => {
+            const card = document.createElement('div');
+            card.className = 'tecnico-card';
+            card.innerHTML = `
+              <div class="tecnico-nome">${tecnico.nome}</div>
+            `;
+            card.onclick = () => {
+              window.location.href = `detalhe-tecnico.html?id=${tecnico.id}`;
+            };
+            lista.appendChild(card);
+          });
+        } else {
+          document.getElementById('mensagem-erro').style.display = 'block';
+          document.getElementById('mensagem-erro').textContent = 'Nenhum técnico encontrado.';
+        }
+      })
+      .catch(error => {
+        document.getElementById('mensagem-erro').style.display = 'block';
+        document.getElementById('mensagem-erro').textContent = error.message;
+        console.error('Erro:', error);
+      });
+  </script>
+</body>
+</html>

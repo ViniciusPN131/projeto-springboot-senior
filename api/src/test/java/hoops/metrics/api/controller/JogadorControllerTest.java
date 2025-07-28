@@ -3,6 +3,8 @@ package hoops.metrics.api.controller;
 
 import hoops.metrics.api.domain.clube.Clube;
 import hoops.metrics.api.domain.clube.ClubeRepository;
+import hoops.metrics.api.domain.estatisticas.DadosGeraisEstatistica;
+import hoops.metrics.api.domain.estatisticas.Estatistica;
 import hoops.metrics.api.domain.jogador.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,6 +16,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -136,5 +139,30 @@ class JogadorControllerTest {
         ResponseEntity<?> response = jogadorController.deletarJogador(id);
 
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+    }
+
+    @Test
+    void deveBuscarMvpDaPartida() {
+        Estatistica estatistica = mock(Estatistica.class);
+        when(jogadorRepository.buscarMvpDaPartida(10L)).thenReturn(List.of(estatistica));
+
+        ResponseEntity<List<Estatistica>> response = jogadorController.buscarMvpDaPartida(10L);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(1, response.getBody().size());
+    }
+
+    @Test
+    void deveBuscarEstatisticasGeraisPorJogador() {
+        DadosGeraisEstatistica dados = mock(DadosGeraisEstatistica.class);
+        Jogador jogador = mock(Jogador.class);
+
+        when(jogadorRepository.estatisticasGeraisPorJogador(1L)).thenReturn(dados);
+        when(jogadorRepository.findById(1L)).thenReturn(Optional.of(jogador));
+
+        ResponseEntity<DadosGeraisEstatistica> response = jogadorController.estatisticasGeraisPorJogador(1L);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(dados, response.getBody());
     }
 }

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detalhes do Técnico</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    body {
+      background-color: #f5f5f5;
+      min-height: 100vh;
+      background: url('https://images.unsplash.com/photo-1546519638-68e109498ffc?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80') no-repeat center center fixed;
+      background-size: cover;
+      position: relative;
+      padding: 20px;
+    }
+    
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 0;
+    }
+    
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 30px;
+      background-color: rgba(255, 255, 255, 0.9);
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      position: relative;
+      z-index: 1;
+      border: 3px solid #ff5e14;
+      text-align: center;
+    }
+    
+    h1 {
+      color: #2c3e50;
+      margin-bottom: 30px;
+      font-size: 2rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .stats-container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+      margin: 30px 0;
+    }
+    
+    .stat-card {
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      border-left: 5px solid #ff5e14;
+    }
+    
+    .stat-value {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: #ff5e14;
+      margin: 10px 0;
+    }
+    
+    .stat-label {
+      font-size: 1rem;
+      color: #2c3e50;
+      font-weight: 600;
+    }
+    
+    .erro {
+      color: #e74c3c;
+      font-weight: bold;
+      margin: 20px 0;
+    }
+    
+    .voltar-btn {
+      display: inline-block;
+      margin-top: 30px;
+      padding: 12px 25px;
+      background: linear-gradient(45deg, #2c3e50, #34495e);
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      font-weight: bold;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+    }
+    
+    .voltar-btn:hover {
+      background: linear-gradient(45deg, #34495e, #2c3e50);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    
+    .loading {
+      color: #2c3e50;
+      font-style: italic;
+      margin: 20px 0;
+    }
+  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+  <div class="container">
+    <h1>
+      <i class="fas fa-basketball-ball"></i>
+      Estatísticas do Técnico
+      <i class="fas fa-basketball-ball"></i>
+    </h1>
+    
+    <div class="loading" id="loading">Carregando estatísticas...</div>
+    <div class="erro" id="mensagem-erro" style="display: none;"></div>
+    
+    <div class="stats-container" id="stats-container" style="display: none;">
+      <div class="stat-card">
+        <div class="stat-label">Vitórias</div>
+        <div class="stat-value" id="vitorias">0</div>
+      </div>
+    </div>
+    
+    <button class="voltar-btn" onclick="window.location.href='tecnicos.html'">
+      <i class="fas fa-arrow-left"></i> Voltar
+    </button>
+  </div>
+
+  <script>
+    // Pega o ID do técnico da URL
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get('id');
+
+    if (!id) {
+      document.getElementById('mensagem-erro').style.display = 'block';
+      document.getElementById('mensagem-erro').textContent = 'ID do técnico não informado.';
+      document.getElementById('loading').style.display = 'none';
+    } else {
+      const url = `http://localhost:8080/tecnicos/tecnico/vitorias/${id}`;
+      
+      fetch(url)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Erro ao buscar as vitórias do técnico');
+          }
+          return response.json();
+        })
+        .then(data => {
+          document.getElementById('loading').style.display = 'none';
+          document.getElementById('stats-container').style.display = 'grid';
+          document.getElementById('vitorias').textContent = data || '0';
+        })
+        .catch(error => {
+          document.getElementById('loading').style.display = 'none';
+          document.getElementById('mensagem-erro').style.display = 'block';
+          document.getElementById('mensagem-erro').textContent = error.message;
+          console.error('Erro:', error);
+        });
+    }
+  </script>
+</body>
+</html>

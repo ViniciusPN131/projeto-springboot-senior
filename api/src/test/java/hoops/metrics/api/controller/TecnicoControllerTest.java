@@ -43,17 +43,6 @@ class TecnicoControllerTest {
     }
 
     @Test
-    void deveBuscarVitoriasDoTecnico() {
-        Long id = 1L;
-        when(tecnicoRepository.vitoriasDoTecnico(id)).thenReturn(15L);
-
-        ResponseEntity<Long> response = tecnicoController.buscarVitoriasDoTecnico(id);
-
-        assertEquals(200, response.getStatusCodeValue());
-        assertEquals(15L, response.getBody());
-    }
-
-    @Test
     void deveListarTecnicos() {
         Tecnico tecnico = mock(Tecnico.class);
         Page<Tecnico> page = new PageImpl<>(List.of(tecnico));
@@ -94,4 +83,15 @@ class TecnicoControllerTest {
         verify(tecnico).excluir();
         assertEquals(204, response.getStatusCodeValue());
     }
+
+    @Test
+    void deveContarVitoriasPorTecnico() {
+        when(tecnicoRepository.contarVitoriasPorTecnico(5L)).thenReturn(7L);
+
+        ResponseEntity<Long> response = tecnicoController.contarVitoriasPorTecnico(5L);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(7L, response.getBody());
+    }
+
 }

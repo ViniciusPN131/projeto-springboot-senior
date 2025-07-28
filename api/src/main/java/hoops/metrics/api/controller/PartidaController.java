@@ -37,7 +37,7 @@ public class PartidaController {
 
 
     @GetMapping
-    public ResponseEntity<Page<DadosListagemPartida>> listarPartidas(@PageableDefault(size = 10, sort = {"data"}) Pageable paginacao) {
+    public ResponseEntity<Page<DadosListagemPartida>> listarPartidas(@PageableDefault(size = 10, sort = {"dataHora"}) Pageable paginacao) {
         var page = partidaRepository.findAllByAtivoTrue(paginacao).map(DadosListagemPartida::new);
         return ResponseEntity.ok(page);
     }

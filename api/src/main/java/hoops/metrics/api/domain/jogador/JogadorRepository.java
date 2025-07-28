@@ -35,4 +35,46 @@ public interface JogadorRepository extends JpaRepository<Jogador, Long> {
                     group by e.jogador_id
             """, nativeQuery = true)
     DadosGeraisEstatistica estatisticasGeraisPorJogador(@Param("jogadorId") Long jogadorId);
+
+
+    @Query(value = """
+                WITH pontos_por_clube AS (
+                    SELECT\s
+                        p.id AS partida_id,
+                        j.clube_id,
+                        SUM(e.total_pontos) AS pontos
+                    FROM estatisticas e
+                    JOIN jogadores j ON e.jogador_id = j.id
+                    JOIN partidas p ON e.partida_id = p.id
+                    GROUP BY p.id, j.clube_id
+                ),
+                vencedores AS (
+                    SELECT\s
+                        partida_id,
+                        clube_id AS clube_vencedor
+                    FROM (
+                        SELECT\s
+                            partida_id,
+                            clube_id,
+                            pontos,
+                            RANK() OVER (PARTITION BY partida_id ORDER BY pontos DESC) AS rank
+                        FROM pontos_por_clube
+                    ) ranked
+                    WHERE rank = 1
+                ),
+                vitorias_jogador AS (
+                    SELECT DISTINCT p.id AS partida_id
+                    FROM estatisticas e
+                    JOIN jogadores j ON e.jogador_id = j.id
+                    JOIN partidas p ON e.partida_id = p.id
+                    JOIN vencedores v ON p.id = v.partida_id
+                    WHERE j.id = :jogadorId
+                      AND j.clube_id = v.clube_vencedor
+                )
+                SELECT COUNT(*) AS quantidade_vitorias
+                FROM vitorias_jogador;
+            
+            """, nativeQuery = true)
+    int quantidadeDeVitoriasDoJogador(@Param("jogadorId") Long jogadorId);
+
 }

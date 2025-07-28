@@ -97,4 +97,15 @@ class ClubeControllerTest {
         verify(clube).excluir();
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
     }
+
+    @Test
+    void deveContarVitoriasPorClube() {
+        when(clubeRepository.contarVitoriasPorClube(3L)).thenReturn(12L);
+
+        ResponseEntity<Long> response = clubeController.contarVitoriasPorClube(3L);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(12L, response.getBody());
+    }
+
 }

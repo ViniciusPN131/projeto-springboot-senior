@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
 import org.springframework.data.domain.*;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -115,4 +116,16 @@ class PartidaControllerTest {
         verify(partida).excluir();
         assertEquals(204, response.getStatusCodeValue());
     }
+
+    @Test
+    void deveBuscarResultadoDaPartida() {
+        DadosResultadoPartida resultado = mock(DadosResultadoPartida.class);
+        when(partidaRepository.buscarResultadosPartidas(99L)).thenReturn(resultado);
+
+        ResponseEntity<DadosResultadoPartida> response = partidaController.buscarResultadoDaPartida(99L);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(resultado, response.getBody());
+    }
+
 }

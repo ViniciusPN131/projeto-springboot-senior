@@ -118,59 +118,13 @@ class EstatisticaControllerTest {
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
     }
 
-    @Test
-    void deveBuscarMvpDaPartida() {
-        Estatistica estatistica = mock(Estatistica.class);
-        when(estatisticaRepository.buscarMvpDaPartida(10L)).thenReturn(List.of(estatistica));
 
-        ResponseEntity<List<Estatistica>> response = estatisticaController.buscarMvpDaPartida(10L);
 
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(1, response.getBody().size());
-    }
 
-    @Test
-    void deveContarVitoriasPorTecnico() {
-        when(estatisticaRepository.contarVitoriasPorTecnico(5L)).thenReturn(7L);
 
-        ResponseEntity<Long> response = estatisticaController.contarVitoriasPorTecnico(5L);
 
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(7L, response.getBody());
-    }
 
-    @Test
-    void deveContarVitoriasPorClube() {
-        when(estatisticaRepository.contarVitoriasPorClube(3L)).thenReturn(12L);
 
-        ResponseEntity<Long> response = estatisticaController.contarVitoriasPorClube(3L);
 
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(12L, response.getBody());
-    }
 
-    @Test
-    void deveBuscarResultadoDaPartida() {
-        DadosResultadoPartida resultado = mock(DadosResultadoPartida.class);
-        when(estatisticaRepository.buscarResultadosPartidas(99L)).thenReturn(resultado);
-
-        ResponseEntity<DadosResultadoPartida> response = estatisticaController.buscarResultadoDaPartida(99L);
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(resultado, response.getBody());
-    }
-
-    @Test
-    void deveBuscarEstatisticasGeraisPorJogador() {
-        DadosGeraisEstatistica dados = mock(DadosGeraisEstatistica.class);
-        Jogador jogador = mock(Jogador.class);
-
-        when(estatisticaRepository.estatisticasGeraisPorJogador(1L)).thenReturn(dados);
-        when(jogadorRepository.findById(1L)).thenReturn(Optional.of(jogador));
-
-        ResponseEntity<DadosGeraisEstatistica> response = estatisticaController.estatisticasGeraisPorJogador(1L);
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(dados, response.getBody());
-    }
 }
