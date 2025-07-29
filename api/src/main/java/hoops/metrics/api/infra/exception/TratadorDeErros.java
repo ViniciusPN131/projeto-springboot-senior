@@ -66,4 +66,18 @@ public class TratadorDeErros {
             this(erro.getField(), erro.getDefaultMessage());
         }
     }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorResponse> tratarErroRegraDeNegocio(
+            IllegalArgumentException ex,
+            WebRequest request
+    ) {
+        ErrorResponse response = new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                ex.getMessage(), // Mensagem da exceção (ex: "CREF já cadastrado!")
+                request.getDescription(false)
+        );
+        return ResponseEntity.badRequest().body(response);
+    }
 }

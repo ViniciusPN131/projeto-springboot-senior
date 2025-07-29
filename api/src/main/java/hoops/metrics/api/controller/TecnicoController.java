@@ -1,7 +1,10 @@
 package hoops.metrics.api.controller;
 
-import hoops.metrics.api.domain.clube.ClubeRepository;
-import hoops.metrics.api.domain.tecnico.*;
+import hoops.metrics.api.dto.tecnico.DadosAtualizacaoTecnico;
+import hoops.metrics.api.dto.tecnico.DadosCadastroTecnico;
+import hoops.metrics.api.dto.tecnico.DadosDetalhamentoTecnico;
+import hoops.metrics.api.dto.tecnico.DadosListagemTecnico;
+import hoops.metrics.api.service.TecnicoService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -18,55 +21,46 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class TecnicoController {
 
     @Autowired
-    private TecnicoRepository tecnicoRepository;
+    private TecnicoService tecnicoService;
 
     @PostMapping
     @Transactional
-    public ResponseEntity cadastrarTecnico(@RequestBody @Valid DadosCadastroTecnico dados, UriComponentsBuilder uriBuilder){
-        var tecnico = new Tecnico(dados);
-        tecnicoRepository.save(tecnico);
-
-        var uri = uriBuilder.path("/tecnicos").buildAndExpand(tecnico.getId()).toUri();
-
-        return ResponseEntity.created(uri).body(new DadosDetalhamentoTecnico(tecnico));
-
+    public ResponseEntity<?> cadastrarTecnico(@RequestBody @Valid DadosCadastroTecnico dados, UriComponentsBuilder uriBuilder) {
+        DadosDetalhamentoTecnico tecnicoCriado = tecnicoService.cadastrar(dados);
+        var uri = uriBuilder.path("/tecnicos/{id}").buildAndExpand(tecnicoCriado.id()).toUri();
+        return ResponseEntity.created(uri).body(tecnicoCriado);
     }
 
     @GetMapping
-    public ResponseEntity<Page<DadosListagemTecnico>> listarTecnicoes(@PageableDefault(size = 10, sort = {"id"}) Pageable paginacao){
+    public ResponseEntity<Page<DadosListagemTecnico>> listarTecnicoes(@PageableDefault(size = 10, sort = {"id"}) Pageable paginacao) {
 
-        var page = tecnicoRepository.findAllByAtivoTrue(paginacao).map(DadosListagemTecnico::new);
-
-        return  ResponseEntity.ok(page);
+        Page<DadosListagemTecnico> page = tecnicoService.listarAtivos(paginacao);
+        return ResponseEntity.ok(page);
 
     }
 
     @PutMapping
     @Transactional
-    public ResponseEntity atualizarTecnico(@RequestBody @Valid DadosAtualizacaoTecnico dados){
+    public ResponseEntity atualizarTecnico(@RequestBody @Valid DadosAtualizacaoTecnico dados) {
 
-        var tecnico = tecnicoRepository.getReferenceById(dados.id());
-        tecnico.atualizarInformacoes(dados);
-
-        return ResponseEntity.ok(new DadosDetalhamentoTecnico(tecnico));
+        DadosDetalhamentoTecnico tecncioAtualizado = tecnicoService.atualizar(dados);
+        return ResponseEntity.ok(tecncioAtualizado);
 
     }
 
     @DeleteMapping("/{id}")
     @Transactional
-    public ResponseEntity deletarTecnico(@PathVariable Long id){
-
-        var tecnico = tecnicoRepository.getReferenceById(id);
-        tecnico.excluir();
-
-        return ResponseEntity.noContent().build();
-
+    public ResponseEntity deletarTecnico(@PathVariable Long id) {
+        if (tecnicoService.excluir(id)) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.notFound().build();
     }
 
     @GetMapping("/tecnico/vitorias/{tecnicoId}")
     public ResponseEntity<Long> contarVitoriasPorTecnico(@PathVariable Long tecnicoId) {
-        var total = tecnicoRepository.contarVitoriasPorTecnico(tecnicoId);
-        return ResponseEntity.ok(total);
+        int total = tecnicoService.contarVitorias(tecnicoId);
+        return ResponseEntity.ok(Long.valueOf(total));
     }
-    
+
 }

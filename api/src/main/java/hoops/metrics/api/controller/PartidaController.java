@@ -1,7 +1,9 @@
 package hoops.metrics.api.controller;
 
-import hoops.metrics.api.domain.clube.ClubeRepository;
-import hoops.metrics.api.domain.partida.*;
+import hoops.metrics.api.dto.partida.*;
+import hoops.metrics.api.repository.ClubeRepository;
+import hoops.metrics.api.repository.PartidaRepository;
+import hoops.metrics.api.service.PartidaService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -22,45 +24,46 @@ public class PartidaController {
     @Autowired
     private ClubeRepository clubeRepository;
 
+    private final PartidaService partidaService;
+
+    @Autowired
+    public PartidaController(PartidaService partidaService) {
+        this.partidaService = partidaService;
+    }
+
     @PostMapping
     @Transactional
     public ResponseEntity cadastrarPartida(@RequestBody @Valid DadosCadastroPartida dados, UriComponentsBuilder uriBuilder) {
-        var clubeCasa = clubeRepository.getReferenceById(dados.timeCasaId());
-        var clubeVisitante = clubeRepository.getReferenceById(dados.timeVisitanteId());
+        DadosDetalhamentoPartida partidaCriada = partidaService.cadastrar(dados);
 
-        var partida = new Partida(dados, clubeCasa, clubeVisitante);
-        partidaRepository.save(partida);
-
-        var uri = uriBuilder.path("/partidas/{id}").buildAndExpand(partida.getId()).toUri();
-        return ResponseEntity.created(uri).body(new DadosDetalhamentoPartida(partida));
+        var uri = uriBuilder.path("/partidas/{id}").buildAndExpand(partidaCriada.id()).toUri();
+        return ResponseEntity.created(uri).body(partidaCriada);
     }
 
 
     @GetMapping
     public ResponseEntity<Page<DadosListagemPartida>> listarPartidas(@PageableDefault(size = 10, sort = {"dataHora"}) Pageable paginacao) {
-        var page = partidaRepository.findAllByAtivoTrue(paginacao).map(DadosListagemPartida::new);
+        Page<DadosListagemPartida> page = partidaService.listar(paginacao);
         return ResponseEntity.ok(page);
     }
 
     @PutMapping
     @Transactional
     public ResponseEntity atualizarPartida(@RequestBody @Valid DadosAtualizacaoPartida dados) {
-        var partida = partidaRepository.getReferenceById(dados.id());
-        partida.atualizarInformacoes(dados);
-        return ResponseEntity.ok(new DadosDetalhamentoPartida(partida));
+        DadosDetalhamentoPartida partidaAtualizada = partidaService.atualizar(dados);
+        return ResponseEntity.ok(partidaAtualizada);
     }
 
     @DeleteMapping("/{id}")
     @Transactional
     public ResponseEntity deletarPartida(@PathVariable Long id) {
-        var partida = partidaRepository.getReferenceById(id);
-        partida.excluir();
+        partidaService.excluir(id);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/resultado/{partidaId}")
     public ResponseEntity<DadosResultadoPartida> buscarResultadoDaPartida(@PathVariable Long partidaId) {
-        var resultado = partidaRepository.buscarResultadosPartidas(partidaId);
+        DadosResultadoPartida resultado = partidaService.buscarResultado(partidaId);
         return ResponseEntity.ok(resultado);
     }
 

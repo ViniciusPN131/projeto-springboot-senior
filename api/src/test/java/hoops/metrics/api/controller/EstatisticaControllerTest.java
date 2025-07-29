@@ -1,12 +1,13 @@
 package hoops.metrics.api.controller;
 
-import hoops.metrics.api.domain.estatisticas.*;
-import hoops.metrics.api.domain.jogador.Jogador;
-import hoops.metrics.api.domain.jogador.JogadorRepository;
-import hoops.metrics.api.domain.partida.DadosResultadoPartida;
-import hoops.metrics.api.domain.partida.Partida;
-import hoops.metrics.api.domain.partida.PartidaRepository;
-import jakarta.servlet.http.Part;
+import hoops.metrics.api.domain.Estatistica;
+import hoops.metrics.api.domain.Jogador;
+import hoops.metrics.api.domain.Partida;
+import hoops.metrics.api.dto.estatistica.DadosAtualizacaoEstatistica;
+import hoops.metrics.api.dto.estatistica.DadosCadastroEstatistica;
+import hoops.metrics.api.dto.estatistica.DadosDetalhamentoEstatistica;
+import hoops.metrics.api.dto.estatistica.DadosListagemEstatistica;
+import hoops.metrics.api.service.EstatisticaService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -20,24 +21,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.net.URI;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class EstatisticaControllerTest {
 
     @Mock
-    private EstatisticaRepository estatisticaRepository;
-
-    @Mock
-    private JogadorRepository jogadorRepository;
-
-    @Mock
-    private PartidaRepository partidaRepository;
+    private EstatisticaService estatisticaService;
 
     @InjectMocks
     private EstatisticaController estatisticaController;
@@ -50,81 +44,67 @@ class EstatisticaControllerTest {
     @Test
     void deveCadastrarEstatisticaComSucesso() {
         DadosCadastroEstatistica dados = new DadosCadastroEstatistica(1L, 2L, 20, 5, 7, 2, 1, 2);
-        Jogador jogador = mock(Jogador.class);
-        Partida partida = mock(Partida.class);
-        Estatistica estatistica = new Estatistica(dados, jogador, partida);
+        DadosDetalhamentoEstatistica detalhamento = new DadosDetalhamentoEstatistica(1L, 1L, 2L, 20, 5, 7, 2, 1, 2);
 
-        when(jogadorRepository.getReferenceById(1L)).thenReturn(jogador);
-        when(partidaRepository.getReferenceById(2L)).thenReturn(partida);
-        when(estatisticaRepository.save(any())).thenReturn(estatistica);
+        when(estatisticaService.cadastrar(dados)).thenReturn(detalhamento);
 
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString("http://localhost");
-
-        ResponseEntity<DadosDetalhamentoEstatistica> response = estatisticaController.cadastrarEstatistica(dados, uriBuilder);
+        ResponseEntity<DadosDetalhamentoEstatistica> response = estatisticaController.cadastrar(dados, uriBuilder);
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        URI location = response.getHeaders().getLocation();
-        assertNotNull(location);
+        assertNotNull(response.getHeaders().getLocation());
         assertNotNull(response.getBody());
+        assertEquals(detalhamento, response.getBody());
     }
 
     @Test
     void deveListarEstatisticasPaginadas() {
-        Estatistica estatistica = mock(Estatistica.class);
-        Page<Estatistica> page = new PageImpl<>(List.of(estatistica));
-        Pageable pageable = PageRequest.of(0, 10);
 
         Jogador jogador = mock(Jogador.class);
         Partida partida = mock(Partida.class);
-
-        when(estatisticaRepository.findAll(pageable)).thenReturn(page);
+        Estatistica estatistica = mock(Estatistica.class);
 
         when(estatistica.getJogador()).thenReturn(jogador);
         when(estatistica.getPartida()).thenReturn(partida);
+        when(jogador.getNome()).thenReturn("Jogador Teste");
+        when(partida.getDataHora()).thenReturn(LocalDateTime.now());
+
+        DadosListagemEstatistica dados = new DadosListagemEstatistica(estatistica);
+        Page<DadosListagemEstatistica> page = new PageImpl<>(List.of(dados));
+        Pageable pageable = PageRequest.of(0, 10);
+
+        when(estatisticaService.listar(pageable)).thenReturn(page);
 
         ResponseEntity<Page<DadosListagemEstatistica>> response = estatisticaController.listar(pageable);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
         assertEquals(1, response.getBody().getTotalElements());
+        assertEquals(dados, response.getBody().getContent().get(0));
     }
 
     @Test
     void deveAtualizarEstatistica() {
         DadosAtualizacaoEstatistica dados = new DadosAtualizacaoEstatistica(1L, 25, 6, 8, 3, 2, 1);
-        Estatistica estatistica = mock(Estatistica.class);
+        DadosDetalhamentoEstatistica detalhamento = new DadosDetalhamentoEstatistica(1L, 1L, 2L, 25, 6, 8, 3, 2, 1);
 
-        Jogador jogador = mock(Jogador.class);
-        Partida partida = mock(Partida.class);
-
-        when(estatisticaRepository.getReferenceById(1L)).thenReturn(estatistica);
-
-        when(estatistica.getJogador()).thenReturn(jogador);
-        when(estatistica.getPartida()).thenReturn(partida);
+        when(estatisticaService.atualizar(dados)).thenReturn(detalhamento);
 
         ResponseEntity<DadosDetalhamentoEstatistica> response = estatisticaController.atualizar(dados);
 
-        verify(estatistica).atualizarInformacoes(dados);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
+        assertEquals(detalhamento, response.getBody());
     }
 
     @Test
     void deveDeletarEstatistica() {
-        doNothing().when(estatisticaRepository).deleteById(1L);
+        Long id = 1L;
+        doNothing().when(estatisticaService).excluir(id);
 
-        ResponseEntity<Void> response = estatisticaController.deletar(1L);
+        ResponseEntity<Void> response = estatisticaController.deletar(id);
 
-        verify(estatisticaRepository).deleteById(1L);
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+        verify(estatisticaService).excluir(id);
     }
-
-
-
-
-
-
-
-
-
-
 }

@@ -1,9 +1,15 @@
 package hoops.metrics.api.controller;
 
-import hoops.metrics.api.domain.clube.ClubeRepository;
-import hoops.metrics.api.domain.estatisticas.DadosGeraisEstatistica;
-import hoops.metrics.api.domain.estatisticas.Estatistica;
-import hoops.metrics.api.domain.jogador.*;
+import hoops.metrics.api.domain.Jogador;
+import hoops.metrics.api.dto.jogador.DadosAtualizacaoJogador;
+import hoops.metrics.api.dto.jogador.DadosDetalhamentoJogador;
+import hoops.metrics.api.dto.jogador.DadosListagemJogador;
+import hoops.metrics.api.dto.jogador.DadosPostJogador;
+import hoops.metrics.api.repository.ClubeRepository;
+import hoops.metrics.api.dto.estatistica.DadosGeraisEstatistica;
+import hoops.metrics.api.domain.Estatistica;
+import hoops.metrics.api.repository.JogadorRepository;
+import hoops.metrics.api.service.JogadorService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

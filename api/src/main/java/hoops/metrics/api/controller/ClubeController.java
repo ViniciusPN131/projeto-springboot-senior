@@ -1,8 +1,10 @@
 package hoops.metrics.api.controller;
 
-import hoops.metrics.api.domain.clube.*;
-import hoops.metrics.api.domain.tecnico.TecnicoRepository;
-import jakarta.persistence.EntityNotFoundException;
+import hoops.metrics.api.dto.clube.DadosAtualizacaoClube;
+import hoops.metrics.api.dto.clube.DadosCadastroClube;
+import hoops.metrics.api.dto.clube.DadosDetalhamentoClube;
+import hoops.metrics.api.dto.clube.DadosListagemClube;
+import hoops.metrics.api.service.ClubeService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -14,69 +16,47 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
-@RequestMapping("clubes")
+@RequestMapping("/clubes")
 public class ClubeController {
 
-    @Autowired
-    private ClubeRepository clubeRepository;
+    private final ClubeService clubeService;
 
     @Autowired
-    private TecnicoRepository tecnicoRepository;
+    public ClubeController(ClubeService clubeService) {
+        this.clubeService = clubeService;
+    }
 
     @PostMapping
     @Transactional
-    public ResponseEntity cadastrarClube(@RequestBody @Valid DadosCadastroClube dados, UriComponentsBuilder uriBuilder){
-
-        var tecnico = tecnicoRepository.findById(dados.tecnico_id())
-                .orElseThrow(() -> new EntityNotFoundException("Técnico não encontrado"));
-
-        var clube = new Clube(dados);
-        clube.setTecnico(tecnico);
-
-        clubeRepository.save(clube);
-
-        var uri = uriBuilder.path("/clubes/{id}").buildAndExpand(clube.getId()).toUri();
-
-        return ResponseEntity.created(uri).body(new DadosDetalhamentoClube(clube));
-
-
+    public ResponseEntity cadastrarClube(@RequestBody @Valid DadosCadastroClube dados, UriComponentsBuilder uriBuilder) {
+        DadosDetalhamentoClube clubeCriado = clubeService.cadastrar(dados);
+        var uri = uriBuilder.path("/clubes/{id}").buildAndExpand(clubeCriado.id()).toUri();
+        return ResponseEntity.created(uri).body(clubeCriado);
     }
 
     @GetMapping
-    public ResponseEntity<Page<DadosListagemClube>> listarClubes(@PageableDefault(size = 10, sort = {"nome"}) Pageable paginacao){
-
-        var page = clubeRepository.findAllByAtivoTrue(paginacao).map(DadosListagemClube::new);
-
-        return  ResponseEntity.ok(page);
-
+    public ResponseEntity<Page<DadosListagemClube>> listarClubes(@PageableDefault(size = 10, sort = {"nome"}) Pageable paginacao) {
+        Page<DadosListagemClube> page = clubeService.listarAtivos(paginacao);
+        return ResponseEntity.ok(page);
     }
 
     @PutMapping
     @Transactional
-    public ResponseEntity atualizarClube(@RequestBody @Valid DadosAtualizacaoClube dados){
-
-        var clube = clubeRepository.getReferenceById(dados.id());
-        clube.atualizarInformacoes(dados);
-
-        return ResponseEntity.ok(new DadosDetalhamentoClube(clube));
-
+    public ResponseEntity atualizarClube(@RequestBody @Valid DadosAtualizacaoClube dados) {
+        DadosDetalhamentoClube clubeAtualizado = clubeService.atualizar(dados);
+        return ResponseEntity.ok(clubeAtualizado);
     }
 
     @DeleteMapping("/{id}")
     @Transactional
-    public ResponseEntity deletarClube(@PathVariable Long id){
-
-        var clube = clubeRepository.getReferenceById(id);
-        clube.excluir();
-
+    public ResponseEntity deletarClube(@PathVariable Long id) {
+        clubeService.excluir(id);
         return ResponseEntity.noContent().build();
-
     }
 
     @GetMapping("/clube/vitorias/{clubeId}")
     public ResponseEntity<Long> contarVitoriasPorClube(@PathVariable Long clubeId) {
-        var total = clubeRepository.contarVitoriasPorClube(clubeId);
+        Long total = clubeService.contarVitorias(clubeId);
         return ResponseEntity.ok(total);
     }
-
 }

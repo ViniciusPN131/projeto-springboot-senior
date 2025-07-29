@@ -1,8 +1,13 @@
 package hoops.metrics.api.controller;
 
-import hoops.metrics.api.domain.estatisticas.*;
-import hoops.metrics.api.domain.jogador.JogadorRepository;
-import hoops.metrics.api.domain.partida.PartidaRepository;
+import hoops.metrics.api.dto.estatistica.DadosAtualizacaoEstatistica;
+import hoops.metrics.api.dto.estatistica.DadosCadastroEstatistica;
+import hoops.metrics.api.dto.estatistica.DadosDetalhamentoEstatistica;
+import hoops.metrics.api.dto.estatistica.DadosListagemEstatistica;
+import hoops.metrics.api.repository.EstatisticaRepository;
+import hoops.metrics.api.repository.JogadorRepository;
+import hoops.metrics.api.repository.PartidaRepository;
+import hoops.metrics.api.service.EstatisticaService;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,58 +24,47 @@ public class EstatisticaController {
 
     @Autowired
     private EstatisticaRepository estatisticaRepository;
-
     @Autowired
     private JogadorRepository jogadorRepository;
-
     @Autowired
     private PartidaRepository partidaRepository;
 
+    private final EstatisticaService estatisticaService;
+
+    @Autowired
+    public EstatisticaController(EstatisticaService estatisticaService) {
+        this.estatisticaService = estatisticaService;
+    }
+
     @PostMapping
     @Transactional
-    public ResponseEntity<DadosDetalhamentoEstatistica> cadastrarEstatistica(
-            @RequestBody @Valid DadosCadastroEstatistica dados,
-            UriComponentsBuilder uriBuilder) {
-
-        var jogador = jogadorRepository.getReferenceById(dados.jogadorId());
-        var partida = partidaRepository.getReferenceById(dados.partidaId());
-
-        var estatistica = new Estatistica(dados, jogador, partida);
-        estatisticaRepository.save(estatistica);
-
-        var uri = uriBuilder.path("/estatisticas/{id}").buildAndExpand(estatistica.getId()).toUri();
-        return ResponseEntity.created(uri).body(new DadosDetalhamentoEstatistica(estatistica));
+    public ResponseEntity<DadosDetalhamentoEstatistica> cadastrar(@RequestBody @Valid DadosCadastroEstatistica dados, UriComponentsBuilder uriBuilder) {
+        DadosDetalhamentoEstatistica estatisticaCriada = estatisticaService.cadastrar(dados);
+        var uri = uriBuilder.path("/estatisticas/{id}").buildAndExpand(estatisticaCriada.id()).toUri();
+        return ResponseEntity.created(uri).body(estatisticaCriada);
     }
 
     @GetMapping
-    public ResponseEntity<Page<DadosListagemEstatistica>> listar(
-            @PageableDefault(size = 10, sort = {"id"}) Pageable paginacao) {
+    public ResponseEntity<Page<DadosListagemEstatistica>> listar(@PageableDefault(size = 10, sort = {"id"}) Pageable paginacao) {
 
-        var page = estatisticaRepository.findAll(paginacao).map(DadosListagemEstatistica::new);
+        Page<DadosListagemEstatistica> page = estatisticaService.listar(paginacao);
         return ResponseEntity.ok(page);
     }
 
     @PutMapping
     @Transactional
-    public ResponseEntity<DadosDetalhamentoEstatistica> atualizar(
-            @RequestBody @Valid DadosAtualizacaoEstatistica dados) {
+    public ResponseEntity<DadosDetalhamentoEstatistica> atualizar(@RequestBody @Valid DadosAtualizacaoEstatistica dados) {
 
-        var estatistica = estatisticaRepository.getReferenceById(dados.id());
-        estatistica.atualizarInformacoes(dados);
-
-        return ResponseEntity.ok(new DadosDetalhamentoEstatistica(estatistica));
+        DadosDetalhamentoEstatistica estatisticaAtualizada = estatisticaService.atualizar(dados);
+        return ResponseEntity.ok(estatisticaAtualizada);
     }
 
     @DeleteMapping("/{id}")
     @Transactional
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
-        estatisticaRepository.deleteById(id);
+        estatisticaService.excluir(id);
         return ResponseEntity.noContent().build();
     }
-
-
-
-
 
 
 }

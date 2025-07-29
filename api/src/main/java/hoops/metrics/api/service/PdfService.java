@@ -2,18 +2,54 @@ package hoops.metrics.api.service;
 
 import com.lowagie.text.*;
 import com.lowagie.text.pdf.PdfWriter;
-import hoops.metrics.api.domain.estatisticas.Estatistica;
-import hoops.metrics.api.domain.jogador.Jogador;
+import hoops.metrics.api.domain.Estatistica;
+import hoops.metrics.api.domain.Jogador;
+import hoops.metrics.api.repository.EstatisticaRepository;
+import hoops.metrics.api.repository.JogadorRepository;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+
 @Service
 public class PdfService {
+    // REMOVER o static dos campos
+    private final JogadorRepository jogadorRepository;
+    private final EstatisticaRepository estatisticaRepository;
 
-    public byte[] gerarPdfJogador(Jogador jogador, List<Estatistica> estatisticasMvp, int quantidadeDeVitorias) throws Exception {
+    public PdfService(JogadorRepository jogadorRepository,
+                      EstatisticaRepository estatisticaRepository) {
+        this.jogadorRepository = jogadorRepository;
+        this.estatisticaRepository = estatisticaRepository;
+    }
+
+    public ResponseEntity<byte[]> exportar(Long id) {
+
+        Jogador jogador = jogadorRepository.findById(id).orElse(null);
+        if (jogador == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        List<Estatistica> estatisticasMvp = estatisticaRepository.buscarEstatisticasOndeJogadorFoiMvp(id);
+
+        int quantidadeDeVitorias = jogadorRepository.quantidadeDeVitoriasDoJogador(id);
+
+        try {
+            byte[] pdf = gerarPdfJogador(jogador, estatisticasMvp, quantidadeDeVitorias);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_PDF);
+            headers.setContentDisposition(ContentDisposition.attachment().filename("jogador_mvp.pdf").build());
+            return new ResponseEntity<>(pdf, headers, HttpStatus.OK);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+
+    }
+
+    public static byte[] gerarPdfJogador(Jogador jogador, List<Estatistica> estatisticasMvp, int quantidadeDeVitorias) throws Exception {
         Document document = new Document();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         PdfWriter.getInstance(document, out);

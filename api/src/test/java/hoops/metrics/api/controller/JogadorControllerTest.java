@@ -1,11 +1,18 @@
 
 package hoops.metrics.api.controller;
 
-import hoops.metrics.api.domain.clube.Clube;
-import hoops.metrics.api.domain.clube.ClubeRepository;
-import hoops.metrics.api.domain.estatisticas.DadosGeraisEstatistica;
-import hoops.metrics.api.domain.estatisticas.Estatistica;
-import hoops.metrics.api.domain.jogador.*;
+import hoops.metrics.api.domain.Clube;
+import hoops.metrics.api.domain.Jogador;
+import hoops.metrics.api.domain.Posicao;
+import hoops.metrics.api.dto.jogador.DadosAtualizacaoJogador;
+import hoops.metrics.api.dto.jogador.DadosCadastroJogador;
+import hoops.metrics.api.dto.jogador.DadosListagemJogador;
+import hoops.metrics.api.dto.jogador.DadosPostJogador;
+import hoops.metrics.api.repository.ClubeRepository;
+import hoops.metrics.api.dto.estatistica.DadosGeraisEstatistica;
+import hoops.metrics.api.domain.Estatistica;
+import hoops.metrics.api.repository.JogadorRepository;
+import hoops.metrics.api.service.JogadorService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
@@ -47,7 +54,7 @@ class JogadorControllerTest {
                 "João Silva", 
                 LocalDate.of(2000, 1, 1), 
                 190, 
-                85.5f, Posicao.ARMADOR, 
+                85.5f, Posicao.ARMADOR,
                 1L);
         DadosCadastroJogador dadosCadastro = new DadosCadastroJogador(
                 "João Silva",

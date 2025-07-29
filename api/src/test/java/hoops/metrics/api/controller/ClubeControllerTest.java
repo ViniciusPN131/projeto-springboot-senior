@@ -1,8 +1,14 @@
 package hoops.metrics.api.controller;
 
-import hoops.metrics.api.domain.clube.*;
-import hoops.metrics.api.domain.tecnico.Tecnico;
-import hoops.metrics.api.domain.tecnico.TecnicoRepository;
+import hoops.metrics.api.domain.Clube;
+import hoops.metrics.api.domain.Tecnico;
+import hoops.metrics.api.dto.clube.DadosAtualizacaoClube;
+import hoops.metrics.api.dto.clube.DadosCadastroClube;
+import hoops.metrics.api.dto.clube.DadosDetalhamentoClube;
+import hoops.metrics.api.dto.clube.DadosListagemClube;
+import hoops.metrics.api.repository.ClubeRepository;
+import hoops.metrics.api.repository.TecnicoRepository;
+import hoops.metrics.api.service.ClubeService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
@@ -26,6 +32,9 @@ class ClubeControllerTest {
     @Mock
     private TecnicoRepository tecnicoRepository;
 
+    @Mock
+    private ClubeService clubeService;
+
     @InjectMocks
     private ClubeController clubeController;
 
@@ -37,34 +46,24 @@ class ClubeControllerTest {
     @Test
     void deveCadastrarClubeComSucesso() {
         DadosCadastroClube dados = new DadosCadastroClube("Clube A", "CLUBE", "Cidade", "Estado", 1L, null);
-        Tecnico tecnico = mock(Tecnico.class);
-        Clube clube = new Clube(dados);
-        clube.setTecnico(tecnico);
+        DadosDetalhamentoClube dadosListagem = mock(DadosDetalhamentoClube.class);
 
-        when(tecnicoRepository.findById(1L)).thenReturn(Optional.of(tecnico));
-        when(clubeRepository.save(any())).thenReturn(clube);
+        when(clubeService.cadastrar(dados)).thenReturn(dadosListagem);
 
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString("http://localhost");
-
         ResponseEntity response = clubeController.cadastrarClube(dados, uriBuilder);
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        URI location = response.getHeaders().getLocation();
-        assertNotNull(location);
+        assertNotNull(response.getHeaders().getLocation());
         assertNotNull(response.getBody());
     }
 
     @Test
     void deveListarClubesAtivos() {
-        Clube clube = mock(Clube.class);
-        Page<Clube> page = new PageImpl<>(List.of(clube));
         Pageable pageable = PageRequest.of(0, 10);
+        Page<DadosListagemClube> page = new PageImpl<>(List.of(mock(DadosListagemClube.class)));
 
-        Tecnico tecnico = mock(Tecnico.class);
-
-        when(clubeRepository.findAllByAtivoTrue(pageable)).thenReturn(page);
-
-        when(clube.getTecnico()).thenReturn(tecnico);
+        when(clubeService.listarAtivos(pageable)).thenReturn(page);
 
         ResponseEntity<Page<DadosListagemClube>> response = clubeController.listarClubes(pageable);
 
@@ -75,37 +74,34 @@ class ClubeControllerTest {
     @Test
     void deveAtualizarClube() {
         DadosAtualizacaoClube dados = new DadosAtualizacaoClube(1L, "Clube", "Sigla", "Cidade", "Estado", mock(Tecnico.class));
-        Clube clube = mock(Clube.class);
+        DadosDetalhamentoClube dadosListagem = mock(DadosDetalhamentoClube.class);
 
-        when(clubeRepository.getReferenceById(1L)).thenReturn(clube);
+        when(clubeService.atualizar(dados)).thenReturn(dadosListagem);
 
         ResponseEntity response = clubeController.atualizarClube(dados);
 
-        verify(clube).atualizarInformacoes(dados);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
     }
 
     @Test
     void deveDeletarClube() {
-        Clube clube = mock(Clube.class);
+        Long id = 1L;
+        doNothing().when(clubeService).excluir(id);
 
-        when(clubeRepository.getReferenceById(1L)).thenReturn(clube);
+        ResponseEntity response = clubeController.deletarClube(id);
 
-        ResponseEntity response = clubeController.deletarClube(1L);
-
-        verify(clube).excluir();
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
     }
 
     @Test
     void deveContarVitoriasPorClube() {
-        when(clubeRepository.contarVitoriasPorClube(3L)).thenReturn(12L);
+        Long id = 3L;
+        when(clubeService.contarVitorias(id)).thenReturn(12L);
 
-        ResponseEntity<Long> response = clubeController.contarVitoriasPorClube(3L);
+        ResponseEntity<Long> response = clubeController.contarVitoriasPorClube(id);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(12L, response.getBody());
     }
-
 }

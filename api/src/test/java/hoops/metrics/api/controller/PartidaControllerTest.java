@@ -1,12 +1,14 @@
 package hoops.metrics.api.controller;
 
-import hoops.metrics.api.domain.clube.Clube;
-import hoops.metrics.api.domain.clube.ClubeRepository;
-import hoops.metrics.api.domain.partida.*;
-import hoops.metrics.api.domain.tecnico.Tecnico;
+import hoops.metrics.api.domain.Partida;
+import hoops.metrics.api.domain.Clube;
+import hoops.metrics.api.dto.partida.*;
+import hoops.metrics.api.service.PartidaService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.*;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,10 +26,7 @@ class PartidaControllerTest {
     private PartidaController partidaController;
 
     @Mock
-    private PartidaRepository partidaRepository;
-
-    @Mock
-    private ClubeRepository clubeRepository;
+    private PartidaService partidaService;
 
     @BeforeEach
     void setUp() {
@@ -36,96 +35,92 @@ class PartidaControllerTest {
 
     @Test
     void deveCadastrarPartidaComSucesso() {
-        Clube clubeCasa = new Clube();
-        Clube clubeVisitante = new Clube();
-
         DadosCadastroPartida dados = mock(DadosCadastroPartida.class);
-        when(dados.timeCasaId()).thenReturn(1L);
-        when(dados.timeVisitanteId()).thenReturn(2L);
+        Partida partida = mock(Partida.class);
+        Clube clubeCasa = mock(Clube.class);
+        Clube clubeVisitante = mock(Clube.class);
 
-        when(clubeRepository.getReferenceById(1L)).thenReturn(clubeCasa);
-        when(clubeRepository.getReferenceById(2L)).thenReturn(clubeVisitante);
+        when(clubeCasa.getNome()).thenReturn("Clube A");
+        when(clubeVisitante.getNome()).thenReturn("Clube B");
+        when(partida.getClubeDaCasa()).thenReturn(clubeCasa);
+        when(partida.getClubeVisitante()).thenReturn(clubeVisitante);
 
-        Partida partida = new Partida(dados, clubeCasa, clubeVisitante);
-        when(partidaRepository.save(any(Partida.class))).thenReturn(partida);
+        DadosDetalhamentoPartida detalhamento = new DadosDetalhamentoPartida(partida);
+        when(partidaService.cadastrar(dados)).thenReturn(detalhamento);
 
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString("http://localhost");
-
         ResponseEntity<?> response = partidaController.cadastrarPartida(dados, uriBuilder);
 
-        assertEquals(201, response.getStatusCodeValue());
-        assertNotNull(response.getBody());
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertNotNull(response.getHeaders().getLocation());
+        assertEquals(detalhamento, response.getBody());
     }
 
     @Test
     void deveListarPartidas() {
-        Tecnico tecnico = new Tecnico();
-        Clube clubeCasa = new Clube(1L, "Nome", "Sigla", "Cidade", "Estado", true, tecnico);
-        Clube clubeVisitante = new Clube(2L, "Nome1", "Sigla1", "Cidade", "Estado", true, tecnico);
+        Partida partida = mock(Partida.class);
+        Clube clubeCasa = mock(Clube.class);
+        Clube clubeVisitante = mock(Clube.class);
 
-        Partida partida = new Partida(
-                1L,
-                "Ginásio Central",
-                LocalDateTime.now(),
-                true,
-                clubeCasa,
-                clubeVisitante
-        );
+        when(clubeCasa.getNome()).thenReturn("Clube X");
+        when(clubeVisitante.getNome()).thenReturn("Clube Y");
+        when(partida.getClubeDaCasa()).thenReturn(clubeCasa);
+        when(partida.getClubeVisitante()).thenReturn(clubeVisitante);
 
-        Page<Partida> page = new PageImpl<>(List.of(partida));
-        Pageable pageable = PageRequest.of(0, 10, Sort.by("data"));
+        DadosListagemPartida dados = new DadosListagemPartida(partida);
+        Page<DadosListagemPartida> page = new PageImpl<>(List.of(dados));
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("dataHora"));
 
-        when(partidaRepository.findAllByAtivoTrue(pageable)).thenReturn(page);
+        when(partidaService.listar(pageable)).thenReturn(page);
 
         ResponseEntity<Page<DadosListagemPartida>> response = partidaController.listarPartidas(pageable);
 
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
         assertEquals(1, response.getBody().getTotalElements());
+        assertEquals(dados, response.getBody().getContent().get(0));
     }
-
 
     @Test
     void deveAtualizarPartida() {
-        Long id = 1L;
         DadosAtualizacaoPartida dados = mock(DadosAtualizacaoPartida.class);
-        when(dados.id()).thenReturn(id);
-        when(dados.local()).thenReturn("Ginásio Central");
-        when(dados.dataHora()).thenReturn(LocalDateTime.now());
-        when(dados.timeCasaId()).thenReturn(10L);
-        when(dados.timeVisitanteId()).thenReturn(20L);
+        Partida partida = mock(Partida.class);
+        Clube clubeCasa = mock(Clube.class);
+        Clube clubeVisitante = mock(Clube.class);
 
-        Partida partida = new Partida(); // ou use um mock se preferir
-        when(partidaRepository.getReferenceById(id)).thenReturn(partida);
+        when(clubeCasa.getNome()).thenReturn("Clube 1");
+        when(clubeVisitante.getNome()).thenReturn("Clube 2");
+        when(partida.getClubeDaCasa()).thenReturn(clubeCasa);
+        when(partida.getClubeVisitante()).thenReturn(clubeVisitante);
+
+        DadosDetalhamentoPartida detalhamento = new DadosDetalhamentoPartida(partida);
+        when(partidaService.atualizar(dados)).thenReturn(detalhamento);
 
         ResponseEntity<?> response = partidaController.atualizarPartida(dados);
 
-        assertEquals(200, response.getStatusCodeValue());
-        assertNotNull(response.getBody());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(detalhamento, response.getBody());
     }
-
 
     @Test
     void deveDeletarPartida() {
         Long id = 1L;
-        Partida partida = mock(Partida.class);
-        when(partidaRepository.getReferenceById(id)).thenReturn(partida);
+        doNothing().when(partidaService).excluir(id);
 
         ResponseEntity<?> response = partidaController.deletarPartida(id);
 
-        verify(partida).excluir();
-        assertEquals(204, response.getStatusCodeValue());
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+        verify(partidaService).excluir(id);
     }
 
     @Test
     void deveBuscarResultadoDaPartida() {
         DadosResultadoPartida resultado = mock(DadosResultadoPartida.class);
-        when(partidaRepository.buscarResultadosPartidas(99L)).thenReturn(resultado);
+        when(partidaService.buscarResultado(99L)).thenReturn(resultado);
 
         ResponseEntity<DadosResultadoPartida> response = partidaController.buscarResultadoDaPartida(99L);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(resultado, response.getBody());
     }
-
 }
