@@ -1,14 +1,24 @@
 -- INSERT DATA
 
 -- Técnicos
-INSERT INTO tecnicos (nome, ativo) VALUES
-('Carlos Silva', TRUE),
-('João Mendes', TRUE);
+INSERT INTO tecnicos (nome, cref, ativo) VALUES
+('Carlos Silva', '1234567', TRUE),
+('João Mendes', '1234566', TRUE),
+('Christian', '1234565', TRUE),
+('Demmer', '1234564', TRUE),
+('Big', '1234563', TRUE),
+('Giangalo', '1234562', TRUE),
+('Tite', '1234561', TRUE);
 
 -- Clubes
 INSERT INTO clubes (nome, sigla, cidade, estado, ativo, tecnico_id) VALUES
-('Tubarões FC', 'TFC', 'Rio de Janeiro', 'RJ', TRUE, 1),
-('Águias SC', 'ASC', 'São Paulo', 'SP', TRUE, 2);
+('Tubarões', 'TFC', 'Rio de Janeiro', 'RJ', TRUE, 1),
+('Águias', 'ASC', 'São Paulo', 'SP', TRUE, 2),
+('Associação de Pais Amigos do Basquete', 'APAB', 'Blumenau', 'SC', TRUE, 3),
+('Caxias Basquetebol Clube', 'AJAB', 'Caxias', 'RS', TRUE, 4),
+('Associação Curitiba Basquete', 'ACU', 'Curitiba', 'PR', TRUE, 5),
+('Noal Goats', 'NOEL', 'Natal', 'RN', TRUE, 6),
+('Game Winners', 'WIN', 'Vitoria', 'ES', TRUE, 7);
 
 -- Jogadores (5 por clube)
 INSERT INTO jogadores (nome, posicao, altura, peso, data_nascimento, clube_id, ativo) VALUES
@@ -23,12 +33,42 @@ INSERT INTO jogadores (nome, posicao, altura, peso, data_nascimento, clube_id, a
 ('Tiago Souza', 'ALA', 188, 82.3, '2001-01-30', 2, TRUE),
 ('Henrique Alves', 'PIVO', 202, 98.0, '1996-06-18', 2, TRUE),
 ('Daniel Martins', 'ALA', 190, 84.0, '2000-09-25', 2, TRUE),
-('Gustavo Nunes', 'ALA_ARMADOR', 187, 80.0, '1998-12-05', 2, TRUE);
+('Gustavo Nunes', 'ALA_ARMADOR', 187, 80.0, '1998-12-05', 2, TRUE),
+-- APAB
+('Vinicius Nunes', 'ARMADOR', 185, 78.0, '1999-07-15', 3, TRUE),
+('Matheus Kloppeu', 'ALA', 188, 82.3, '2001-01-30', 3, TRUE),
+('Leandro Queixo', 'PIVO', 202, 98.0, '1996-06-18', 3, TRUE),
+('Pedro Miranda', 'ALA', 190, 84.0, '2000-09-25', 3, TRUE),
+('Pablo Honorio', 'ALA_ARMADOR', 187, 80.0, '1998-12-05', 3, TRUE),
+-- Caxias
+('Vinicius Amorim', 'ARMADOR', 185, 78.0, '1999-07-15', 4, TRUE),
+('Arthur Bruno Mars', 'ALA', 188, 82.3, '2001-01-30', 4, TRUE),
+('Israel Da Silva', 'PIVO', 202, 98.0, '1996-06-18', 4, TRUE),
+('Braço Grande', 'ALA', 190, 84.0, '2000-09-25', 4, TRUE),
+('Ballelo', 'ALA_ARMADOR', 187, 80.0, '1998-12-05', 4, TRUE),
+-- Águias SC
+('Juan', 'ARMADOR', 185, 78.0, '1999-07-15', 5, TRUE),
+('Chinelo', 'ALA', 188, 82.3, '2001-01-30', 5, TRUE),
+('Melo', 'PIVO', 202, 98.0, '1996-06-18', 5, TRUE),
+('Marcello', 'ALA', 190, 84.0, '2000-09-25', 5, TRUE),
+('Pianca', 'ALA_ARMADOR', 187, 80.0, '1998-12-05', 5, TRUE),
+-- Águias SC
+('Po', 'ARMADOR', 185, 78.0, '1999-07-15', 6, TRUE),
+('Tigresa', 'ALA', 188, 82.3, '2001-01-30', 6, TRUE),
+('Louva-Deus', 'PIVO', 202, 98.0, '1996-06-18', 6, TRUE),
+('Macaco', 'ALA', 190, 84.0, '2000-09-25', 6, TRUE),
+('Cobra', 'ALA_ARMADOR', 187, 80.0, '1998-12-05', 6, TRUE),
+-- Águias SC
+('Rick', 'ARMADOR', 185, 78.0, '1999-07-15', 7, TRUE),
+('Morty', 'ALA', 188, 82.3, '2001-01-30', 7, TRUE),
+('Beth', 'PIVO', 202, 98.0, '1996-06-18', 7, TRUE),
+('Summer', 'ALA', 190, 84.0, '2000-09-25', 7, TRUE),
+('Jerry', 'ALA_ARMADOR', 187, 80.0, '1998-12-05', 7, TRUE);
 
 -- Partidas
-INSERT INTO partidas (local, data, clube_mandante_id, clube_visitante_id) VALUES
-('Ginásio RJ', '2025-07-10', 1, 2),
-('Arena SP', '2025-07-15', 2, 1);
+INSERT INTO partidas (local, data_hora, clube_mandante_id, clube_visitante_id) VALUES
+('Ginásio RJ', '2025-07-10T10:00', 1, 2),
+('Arena SP', '2025-07-15T10:00', 2, 1);
 
 -- Estatísticas da Partida 1
 INSERT INTO estatisticas (jogador_id, partida_id, total_pontos, total_faltas, rebotes_ofensivos, rebotes_defensivos, roubos_de_bola, turnovers) VALUES

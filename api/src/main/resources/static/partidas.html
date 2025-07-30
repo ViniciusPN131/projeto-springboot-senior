@@ -1,257 +1,176 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Partidas de Basquete</title>
+  <title>Partidas</title>
   <style>
-    * {
+    body {
       margin: 0;
       padding: 0;
-      box-sizing: border-box;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-    
-    body {
-      background-color: #f5f5f5;
-      min-height: 100vh;
-      background: url('https://images.unsplash.com/photo-1546519638-68e109498ffc?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80') no-repeat center center fixed;
-      background-size: cover;
-      position: relative;
-      padding: 20px;
-    }
-    
-    body::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.6);
-      z-index: 0;
+      font-family: Arial, sans-serif;
     }
     
     .container {
-      max-width: 1000px;
-      margin: 0 auto;
-      padding: 30px;
-      background-color: rgba(255, 255, 255, 0.9);
-      border-radius: 15px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-      position: relative;
-      z-index: 1;
-      border: 3px solid #ff5e14;
+      margin: 20px;
     }
     
-    h1 {
-      color: #2c3e50;
-      margin-bottom: 30px;
-      font-size: 2.2rem;
-      text-align: center;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      font-weight: 800;
+    .botao-menu {
+      padding: 10px 15px;
+      margin-bottom: 20px;
+      font-size: 16px;
+      cursor: pointer;
     }
     
-    h1 i {
-      color: #ff5e14;
-      margin: 0 10px;
-    }
-    
-    .partidas-list {
+    #lista-partidas {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 20px;
+      gap: 15px;
+      margin-bottom: 20px;
     }
     
     .partida-card {
-      background: rgba(255, 255, 255, 0.95);
-      border-radius: 10px;
-      padding: 20px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      border-left: 5px solid #ff5e14;
-      transition: all 0.3s ease;
-    }
-    
-    .partida-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
-    }
-    
-    .partida-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 15px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid #eee;
+      border: 1px solid #ddd;
+      padding: 15px;
     }
     
     .partida-times {
-      display: flex;
-      align-items: center;
-      gap: 10px;
+      font-weight: bold;
+      margin-bottom: 5px;
     }
     
     .partida-vs {
-      font-weight: bold;
-      color: #ff5e14;
-      margin: 0 10px;
+      margin: 0 5px;
     }
     
     .partida-data {
-      background-color: #2c3e50;
-      color: white;
-      padding: 5px 10px;
-      border-radius: 20px;
-      font-size: 0.9rem;
+      margin-bottom: 10px;
     }
     
     .partida-info {
-      margin-top: 15px;
-    }
-    
-    .partida-info p {
-      margin: 8px 0;
-      color: #333;
-    }
-    
-    .partida-info strong {
-      color: #2c3e50;
-      font-weight: 600;
+      margin-top: 10px;
     }
     
     .resultado-btn {
-      display: inline-block;
-      margin-top: 15px;
-      padding: 8px 15px;
-      background: linear-gradient(45deg, #e74c3c, #c0392b);
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-weight: bold;
-      transition: all 0.3s ease;
-    }
-    
-    .resultado-btn:hover {
-      background: linear-gradient(45deg, #c0392b, #e74c3c);
-      transform: translateY(-2px);
-    }
-    
-    .erro {
-      color: #e74c3c;
-      text-align: center;
-      padding: 20px;
-      font-weight: bold;
-      background-color: rgba(255, 255, 255, 0.8);
-      border-radius: 5px;
-    }
-    
-    .voltar-btn {
-      display: inline-block;
-      margin-top: 30px;
-      padding: 12px 25px;
-      background: linear-gradient(45deg, #2c3e50, #34495e);
-      color: white;
-      text-decoration: none;
-      border-radius: 5px;
-      font-weight: bold;
-      transition: all 0.3s ease;
-      border: none;
+      padding: 5px 10px;
+      margin-top: 5px;
       cursor: pointer;
     }
     
-    .voltar-btn:hover {
-      background: linear-gradient(45deg, #34495e, #2c3e50);
-      transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    #mensagem-erro {
+      margin-top: 20px;
     }
     
-    @media (max-width: 768px) {
-      .partida-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-      }
-      
-      .container {
-        padding: 20px;
-      }
+    .paginacao {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    
+    .paginacao button {
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+    
+    .pagina-atual {
+      font-weight: bold;
     }
   </style>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
+  <button class="botao-menu" onclick="window.location.href='index.html'">MENU</button>
+  
   <div class="container">
-    <h1>
-      <i class="fas fa-basketball-ball"></i>
-      Partidas de Basquete
-      <i class="fas fa-basketball-ball"></i>
-    </h1>
-    
-    <div class="partidas-list" id="lista-partidas"></div>
-    <p class="erro" id="mensagem-erro" style="display: none;"></p>
-    
-    <button class="voltar-btn" onclick="window.location.href='index.html'">
-      <i class="fas fa-arrow-left"></i> Voltar
-    </button>
+    <h1>Partidas</h1>
+    <div id="mensagem-erro"></div>
+    <div id="lista-partidas"></div>
+    <div class="paginacao">
+      <button id="btn-anterior" disabled>Anterior</button>
+      <span id="pagina-atual" class="pagina-atual">1</span>
+      <button id="btn-proximo">Próxima</button>
+    </div>
   </div>
 
   <script>
-    const url = 'http://localhost:8080/partidas';
+    let paginaAtual = 0; // A API geralmente começa com página 0
+    const itensPorPagina = 10; // Ajuste conforme sua API
+    let totalPaginas = 1;
 
-    fetch(url)
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Erro ao buscar as partidas');
-        }
-        return response.json();
-      })
-      .then(data => {
-        const container = document.getElementById('lista-partidas');
-        
-        if (data.content && data.content.length > 0) {
-          data.content.forEach(partida => {
-            const card = document.createElement('div');
-            card.className = 'partida-card';
-            
-            // Formatando a data
-            const dataHora = new Date(partida.dataHora);
-            const dataFormatada = dataHora.toLocaleDateString('pt-BR');
-            const horaFormatada = dataHora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-            
-            card.innerHTML = `
-              <div class="partida-header">
-                <div class="partida-times">
-                  <span>${partida.timeCasa}</span>
-                  <span class="partida-vs">vs</span>
-                  <span>${partida.timeVisitante}</span>
+    function carregarPartidas(pagina) {
+      const url = `http://localhost:8080/partidas?page=${pagina}&size=${itensPorPagina}`;
+
+      fetch(url)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Erro ao buscar as partidas');
+          }
+          return response.json();
+        })
+        .then(data => {
+          const container = document.getElementById('lista-partidas');
+          container.innerHTML = '';
+          
+          if (data.content && data.content.length > 0) {
+            data.content.forEach(partida => {
+              const card = document.createElement('div');
+              card.className = 'partida-card';
+              
+              const dataHora = new Date(partida.dataHora);
+              const dataFormatada = dataHora.toLocaleDateString('pt-BR');
+              const horaFormatada = dataHora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+              
+              card.innerHTML = `
+                <div class="partida-header">
+                  <div class="partida-times">
+                    <span>${partida.timeCasa}</span>
+                    <span class="partida-vs">vs</span>
+                    <span>${partida.timeVisitante}</span>
+                  </div>
+                  <div class="partida-data">
+                    ${dataFormatada} - ${horaFormatada}
+                  </div>
                 </div>
-                <div class="partida-data">
-                  <i class="fas fa-calendar-alt"></i> ${dataFormatada} - ${horaFormatada}
+                <div class="partida-info">
+                  <p><strong>Local:</strong> ${partida.local}</p>
+                  <button class="resultado-btn" onclick="verResultado(${partida.id})">
+                    Ver Resultado
+                  </button>
                 </div>
-              </div>
-              <div class="partida-info">
-                <p><strong>Local:</strong> ${partida.local}</p>
-                <button class="resultado-btn" onclick="verResultado(${partida.id})">
-                  <i class="fas fa-chart-line"></i> Ver Resultado
-                </button>
-              </div>
-            `;
-            container.appendChild(card);
-          });
-        } else {
-          document.getElementById('mensagem-erro').style.display = 'block';
-          document.getElementById('mensagem-erro').textContent = 'Nenhuma partida encontrada.';
-        }
-      })
-      .catch(error => {
-        document.getElementById('mensagem-erro').style.display = 'block';
-        document.getElementById('mensagem-erro').textContent = error.message;
-        console.error('Erro:', error);
-      });
+              `;
+              container.appendChild(card);
+            });
+
+            // Atualiza controles de paginação
+            totalPaginas = data.totalPages || 1;
+            document.getElementById('pagina-atual').textContent = pagina + 1;
+            document.getElementById('btn-anterior').disabled = pagina === 0;
+            document.getElementById('btn-proximo').disabled = pagina >= totalPaginas - 1;
+          } else {
+            document.getElementById('mensagem-erro').textContent = 'Nenhuma partida encontrada.';
+          }
+        })
+        .catch(error => {
+          document.getElementById('mensagem-erro').textContent = error.message;
+          console.error('Erro:', error);
+        });
+    }
+
+    // Event listeners para os botões de paginação
+    document.getElementById('btn-anterior').addEventListener('click', () => {
+      if (paginaAtual > 0) {
+        paginaAtual--;
+        carregarPartidas(paginaAtual);
+      }
+    });
+
+    document.getElementById('btn-proximo').addEventListener('click', () => {
+      if (paginaAtual < totalPaginas - 1) {
+        paginaAtual++;
+        carregarPartidas(paginaAtual);
+      }
+    });
 
     function verResultado(partidaId) {
       fetch(`http://localhost:8080/partidas/resultado/${partidaId}`)
@@ -262,13 +181,16 @@
           return response.json();
         })
         .then(resultado => {
-          alert(`Resultado da partida:\n${resultado.timeCasa}: ${resultado.pontosCasa}\n${resultado.timeVisitante}: ${resultado.pontosVisitante}`);
+          alert(`Resultado da partida:\n${resultado.timeMandante}: ${resultado.pontosMandante}\n${resultado.timeVisitante}: ${resultado.pontosVisitante}`);
         })
         .catch(error => {
           console.error('Erro:', error);
           alert('Erro ao buscar resultado: ' + error.message);
         });
     }
+
+    // Carrega a primeira página ao iniciar
+    carregarPartidas(paginaAtual);
   </script>
 </body>
 </html>

@@ -1,10 +1,8 @@
 package hoops.metrics.api.controller;
 
 import hoops.metrics.api.domain.Jogador;
-import hoops.metrics.api.dto.jogador.DadosAtualizacaoJogador;
-import hoops.metrics.api.dto.jogador.DadosDetalhamentoJogador;
-import hoops.metrics.api.dto.jogador.DadosListagemJogador;
-import hoops.metrics.api.dto.jogador.DadosPostJogador;
+import hoops.metrics.api.dto.clube.DadosDetalhamentoClube;
+import hoops.metrics.api.dto.jogador.*;
 import hoops.metrics.api.repository.ClubeRepository;
 import hoops.metrics.api.dto.estatistica.DadosGeraisEstatistica;
 import hoops.metrics.api.domain.Estatistica;
@@ -39,22 +37,19 @@ public class JogadorController {
     @Transactional
     public ResponseEntity cadastrarJogador(@RequestBody @Valid DadosPostJogador dadosPost, UriComponentsBuilder uriBuilder){
 
-        var dados = jogadorService.validarJogador(dadosPost);
+        Jogador jogadorCriado = jogadorService.cadastrar(dadosPost);
 
-        var jogador = new Jogador(dados);
+        if (jogadorCriado==null)
+        return ResponseEntity.badRequest().build();
 
-        jogadorRepository.save(jogador);
-
-        var uri = uriBuilder.path("/jogadores/{id}").buildAndExpand(jogador.getId()).toUri();
-
-        return ResponseEntity.created(uri).body(new DadosDetalhamentoJogador(jogador));
-
+        var uri = uriBuilder.path("/jogadores/{id}").buildAndExpand(jogadorCriado.getId()).toUri();
+        return ResponseEntity.created(uri).body(new DadosDetalhamentoJogador(jogadorCriado));
     }
 
     @GetMapping
     public ResponseEntity<Page<DadosListagemJogador>> listarJogadores(@PageableDefault(size = 10, sort = {"nome"}) Pageable paginacao){
 
-        var page = jogadorRepository.findAll(paginacao).map(DadosListagemJogador::new);
+        Page page = jogadorService.listar(paginacao);
 
         return  ResponseEntity.ok(page);
 
@@ -64,10 +59,8 @@ public class JogadorController {
     @Transactional
     public ResponseEntity atualizarJogador(@RequestBody @Valid DadosAtualizacaoJogador dados){
 
-        var jogador = jogadorRepository.getReferenceById(dados.id());
-        jogador.atualizarInformacoes(dados);
-
-        return ResponseEntity.ok(new DadosDetalhamentoJogador(jogador));
+        DadosDetalhamentoJogador clubeAtualizado = jogadorService.atualizar(dados);
+        return ResponseEntity.ok(clubeAtualizado);
 
     }
 
@@ -75,10 +68,10 @@ public class JogadorController {
     @Transactional
     public ResponseEntity deletarJogador(@PathVariable Long id){
 
-        var jogador = jogadorRepository.getReferenceById(id);
-        jogador.excluir();
-
-        return ResponseEntity.noContent().build();
+        if (jogadorService.excluir(id)) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.notFound().build();
 
     }
 
@@ -91,6 +84,7 @@ public class JogadorController {
     @GetMapping("/jogador/geral/{jogadorId}")
     public ResponseEntity<DadosGeraisEstatistica> estatisticasGeraisPorJogador(@PathVariable Long jogadorId) {
         DadosGeraisEstatistica resultado = jogadorRepository.estatisticasGeraisPorJogador(jogadorId);
+        if (resultado==null) return ResponseEntity.badRequest().build();
         var jogador = jogadorRepository.findById(jogadorId).orElseThrow(() -> new RuntimeException("Jogador não encontrado"));
 
         return ResponseEntity.ok(resultado);

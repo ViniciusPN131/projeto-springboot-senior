@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
+
 public interface PartidaRepository extends JpaRepository<Partida, Long> {
     Page<Partida> findAllByAtivoTrue(Pageable paginacao);
 
@@ -30,4 +32,5 @@ public interface PartidaRepository extends JpaRepository<Partida, Long> {
             """, nativeQuery = true)
     DadosResultadoPartida buscarResultadoDaPartida(@Param("partidaId") Long partidaId);
 
+    Object existsByClubeDaCasaIdAndClubeVisitanteIdAndDataHora(long l, long l1, LocalDateTime any);
 }

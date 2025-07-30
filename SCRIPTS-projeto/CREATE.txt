@@ -18,6 +18,7 @@ CASCADE;
 CREATE TABLE tecnicos (
     id SERIAL PRIMARY KEY,
     nome VARCHAR(255) NOT NULL,
+	cref VARCHAR(255) UNIQUE NOT NULL,
     ativo BOOLEAN DEFAULT TRUE
 );
 
@@ -50,7 +51,7 @@ CREATE TABLE jogadores (
 CREATE TABLE partidas (
     id SERIAL PRIMARY KEY,
     local VARCHAR(255),
-    data DATE,
+    data_hora TIMESTAMP,
 	ativo BOOLEAN DEFAULT TRUE,
     clube_mandante_id INTEGER NOT NULL,
     clube_visitante_id INTEGER NOT NULL,
@@ -70,5 +71,6 @@ CREATE TABLE estatisticas (
     roubos_de_bola INTEGER,
     turnovers INTEGER,
     CONSTRAINT fk_est_jogador FOREIGN KEY (jogador_id) REFERENCES jogadores(id),
-    CONSTRAINT fk_est_partida FOREIGN KEY (partida_id) REFERENCES partidas(id)
+    CONSTRAINT fk_est_partida FOREIGN KEY (partida_id) REFERENCES partidas(id),
+	UNIQUE(jogador_id, partida_id)
 );

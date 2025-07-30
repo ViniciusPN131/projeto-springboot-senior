@@ -1,248 +1,205 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lista de Jogadores de Basquete</title>
+  <title>Jogadores</title>
   <style>
-    * {
+    body {
       margin: 0;
       padding: 0;
-      box-sizing: border-box;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-    
-    body {
-      background-color: #f5f5f5;
-      min-height: 100vh;
-      background: url('https://images.unsplash.com/photo-1546519638-68e109498ffc?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80') no-repeat center center fixed;
-      background-size: cover;
-      position: relative;
-      padding: 20px;
-    }
-    
-    body::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.6);
-      z-index: 0;
+      font-family: Arial, sans-serif;
     }
     
     .container {
-      max-width: 1000px;
-      margin: 0 auto;
-      padding: 30px;
-      background-color: rgba(255, 255, 255, 0.9);
-      border-radius: 15px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-      position: relative;
-      z-index: 1;
-      border: 3px solid #ff5e14;
+      margin: 20px;
     }
     
-    h1 {
-      color: #2c3e50;
-      margin-bottom: 30px;
-      font-size: 2.2rem;
-      text-align: center;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      font-weight: 800;
-    }
-    
-    h1 i {
-      color: #ff5e14;
-      margin: 0 10px;
+    .botao-menu {
+      padding: 10px 15px;
+      margin-bottom: 20px;
+      font-size: 16px;
+      cursor: pointer;
     }
     
     #lista-jogadores {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 20px;
+      gap: 15px;
+      margin-bottom: 20px;
     }
     
     .jogador-card {
-      background: rgba(255, 255, 255, 0.95);
-      border-radius: 10px;
-      padding: 20px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      border-left: 5px solid #ff5e14;
-      transition: all 0.3s ease;
-    }
-    
-    .jogador-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
-    }
-    
-    .jogador-info {
-      margin-bottom: 15px;
+      border: 1px solid #ddd;
+      padding: 15px;
     }
     
     .jogador-info p {
-      margin: 8px 0;
-      font-size: 16px;
-      color: #333;
-    }
-    
-    .jogador-info strong {
-      color: #2c3e50;
-      font-weight: 600;
-      display: inline-block;
-      width: 120px;
+      margin: 5px 0;
     }
     
     .botoes-jogador {
-      display: flex;
-      gap: 15px;
-      margin-top: 15px;
+      margin-top: 10px;
     }
     
-    .botao-perfil, .botao-pdf {
-      padding: 10px 20px;
-      border: none;
-      border-radius: 5px;
+    .botoes-jogador button {
+      padding: 5px 10px;
+      margin-right: 10px;
       cursor: pointer;
-      font-weight: bold;
-      transition: all 0.3s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
-    
-    .botao-perfil {
-      background: linear-gradient(45deg, #3498db, #2980b9);
-      color: white;
-    }
-    
-    .botao-pdf {
-      background: linear-gradient(45deg, #e74c3c, #c0392b);
-      color: white;
-    }
-    
-    .botao-perfil:hover {
-      background: linear-gradient(45deg, #2980b9, #3498db);
-      transform: translateY(-2px);
-    }
-    
-    .botao-pdf:hover {
-      background: linear-gradient(45deg, #c0392b, #e74c3c);
-      transform: translateY(-2px);
     }
     
     #erro {
-      color: #e74c3c;
-      text-align: center;
-      padding: 20px;
-      font-weight: bold;
-      background-color: rgba(255, 255, 255, 0.9);
-      border-radius: 5px;
+      color: #000;
       margin-top: 20px;
     }
     
-    .voltar-btn {
-      display: inline-block;
-      margin-top: 30px;
-      padding: 12px 25px;
-      background: linear-gradient(45deg, #2c3e50, #34495e);
-      color: white;
-      text-decoration: none;
-      border-radius: 5px;
-      font-weight: bold;
-      transition: all 0.3s ease;
-      border: none;
+    .paginacao {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    
+    .paginacao button {
+      padding: 5px 10px;
       cursor: pointer;
     }
     
-    .voltar-btn:hover {
-      background: linear-gradient(45deg, #34495e, #2c3e50);
-      transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    .pagina-atual {
+      font-weight: bold;
     }
     
-    @media (max-width: 768px) {
-      .container {
-        padding: 20px;
-      }
-      
-      .botoes-jogador {
-        flex-direction: column;
-      }
-      
-      .jogador-info strong {
-        width: 100px;
-      }
+    .sem-dados {
+      text-align: center;
+      padding: 20px;
+      border: 1px solid #ddd;
+      background-color: #f9f9f9;
     }
   </style>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
+  <button class="botao-menu" onclick="window.location.href='index.html'">MENU</button>
+  
   <div class="container">
-    <h1>
-      <i class="fas fa-basketball-ball"></i>
-      Lista de Jogadores
-      <i class="fas fa-basketball-ball"></i>
-    </h1>
-    
+    <h1>Jogadores</h1>
+    <div id="erro"></div>
     <div id="lista-jogadores"></div>
-    <p id="erro" style="display: none;"></p>
-    
-    <button class="voltar-btn" onclick="window.location.href='index.html'">
-      <i class="fas fa-arrow-left"></i> Voltar
-    </button>
+    <div class="paginacao">
+      <button id="btn-anterior" disabled>Anterior</button>
+      <span id="pagina-atual" class="pagina-atual">1</span>
+      <button id="btn-proximo">Próxima</button>
+    </div>
   </div>
 
   <script>
-    const url = 'http://localhost:8080/jogadores';
+    let paginaAtual = 0;
+    const itensPorPagina = 10;
+    let totalPaginas = 1;
 
-    fetch(url)
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Erro ao buscar jogadores');
-        }
-        return response.json();
-      })
-      .then(data => {
-        const container = document.getElementById('lista-jogadores');
-        
-        if (data.content && data.content.length > 0) {
-          data.content.forEach(jogador => {
+    function carregarJogadores(pagina) {
+      const url = `http://localhost:8080/jogadores?page=${pagina}&size=${itensPorPagina}`;
+
+      fetch(url)
+        .then(response => {
+          if (!response.ok) {
+            // Se houver erro, retorna um objeto vazio
+            return {
+              content: [],
+              totalPages: 1
+            };
+          }
+          return response.json();
+        })
+        .then(data => {
+          const container = document.getElementById('lista-jogadores');
+          container.innerHTML = '';
+          
+          if (data.content && data.content.length > 0) {
+            data.content.forEach(jogador => {
+              const card = document.createElement('div');
+              card.className = 'jogador-card';
+              card.innerHTML = `
+                <div class="jogador-info">
+                  <p><strong>Nome:</strong> ${jogador.nome || 'N/A'}</p>
+                  <p><strong>Altura:</strong> ${jogador.altura || 0} cm</p>
+                  <p><strong>Peso:</strong> ${jogador.peso || 0} kg</p>
+                  <p><strong>Clube:</strong> ${jogador.clube?.nome || 'N/A'} (${jogador.clube?.sigla || 'N/A'}) - ${jogador.clube?.cidade || 'N/A'}/${jogador.clube?.estado || 'N/A'}</p>
+                  <p><strong>Técnico:</strong> ${jogador.clube?.tecnico?.nome || 'N/A'}</p>
+                  <p><strong>Pontuação Total:</strong> ${jogador.pontuacaoTotal || 0}</p>
+                </div>
+                <div class="botoes-jogador">
+                  <button class="botao-perfil" onclick="window.location.href='perfil-jogador.html?id=${jogador.id}'">
+                    Ver Perfil
+                  </button>
+                  <button class="botao-pdf" onclick="exportarPDF(${jogador.id})">
+                    Exportar PDF
+                  </button>
+                </div>
+              `;
+              container.appendChild(card);
+            });
+          } else {
+            // Exibe um card com valores zerados quando não há dados
             const card = document.createElement('div');
-            card.className = 'jogador-card';
+            card.className = 'sem-dados';
             card.innerHTML = `
               <div class="jogador-info">
-                <p><strong>Nome:</strong> ${jogador.nome}</p>
-                <p><strong>Altura:</strong> ${jogador.altura} cm</p>
-                <p><strong>Peso:</strong> ${jogador.peso} kg</p>
-                <p><strong>Clube:</strong> ${jogador.clube.nome} (${jogador.clube.sigla}) - ${jogador.clube.cidade}/${jogador.clube.estado}</p>
-                <p><strong>Técnico:</strong> ${jogador.clube.tecnico.nome}</p>
+                <p><strong>Nome:</strong> N/A</p>
+                <p><strong>Altura:</strong> 0 cm</p>
+                <p><strong>Peso:</strong> 0 kg</p>
+                <p><strong>Clube:</strong> N/A (N/A) - N/A/N/A</p>
+                <p><strong>Técnico:</strong> N/A</p>
+                <p><strong>Pontuação Total:</strong> 0</p>
               </div>
-              <div class="botoes-jogador">
-                <button class="botao-perfil" onclick="window.location.href='perfil-jogador.html?id=${jogador.id}'">
-                  <i class="fas fa-user"></i> Ver Perfil
-                </button>
-                <button class="botao-pdf" onclick="exportarPDF(${jogador.id})">
-                  <i class="fas fa-file-pdf"></i> Exportar PDF
-                </button>
-              </div>
+              <p>Nenhum jogador encontrado ou dados disponíveis.</p>
             `;
             container.appendChild(card);
-          });
-        } else {
-          document.getElementById('erro').style.display = 'block';
-          document.getElementById('erro').textContent = 'Nenhum jogador encontrado.';
-        }
-      })
-      .catch(error => {
-        document.getElementById('erro').style.display = 'block';
-        document.getElementById('erro').textContent = error.message;
-        console.error('Erro:', error);
-      });
+          }
+
+          // Atualiza controles de paginação
+          totalPaginas = data.totalPages || 1;
+          document.getElementById('pagina-atual').textContent = pagina + 1;
+          document.getElementById('btn-anterior').disabled = pagina === 0;
+          document.getElementById('btn-proximo').disabled = pagina >= totalPaginas - 1;
+        })
+        .catch(error => {
+          console.error('Erro:', error);
+          // Exibe um card com valores zerados em caso de erro
+          const container = document.getElementById('lista-jogadores');
+          container.innerHTML = '';
+          
+          const card = document.createElement('div');
+          card.className = 'sem-dados';
+          card.innerHTML = `
+            <div class="jogador-info">
+              <p><strong>Nome:</strong> N/A</p>
+              <p><strong>Altura:</strong> 0 cm</p>
+              <p><strong>Peso:</strong> 0 kg</p>
+              <p><strong>Clube:</strong> N/A (N/A) - N/A/N/A</p>
+              <p><strong>Técnico:</strong> N/A</p>
+              <p><strong>Pontuação Total:</strong> 0</p>
+            </div>
+            <p>Não foi possível carregar os dados dos jogadores.</p>
+          `;
+          container.appendChild(card);
+        });
+    }
+
+    // Event listeners para os botões de paginação
+    document.getElementById('btn-anterior').addEventListener('click', () => {
+      if (paginaAtual > 0) {
+        paginaAtual--;
+        carregarJogadores(paginaAtual);
+      }
+    });
+
+    document.getElementById('btn-proximo').addEventListener('click', () => {
+      if (paginaAtual < totalPaginas - 1) {
+        paginaAtual++;
+        carregarJogadores(paginaAtual);
+      }
+    });
 
     function exportarPDF(jogadorId) {
       fetch(`http://localhost:8080/api/jogadores/${jogadorId}/exportar-pdf`, {
@@ -255,7 +212,6 @@
         return response.blob();
       })
       .then(blob => {
-        // Cria um link para download do PDF
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
@@ -270,6 +226,9 @@
         alert('Erro ao exportar PDF: ' + error.message);
       });
     }
+
+    // Carrega a primeira página ao iniciar
+    carregarJogadores(paginaAtual);
   </script>
 </body>
 </html>

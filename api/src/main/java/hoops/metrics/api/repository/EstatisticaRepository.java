@@ -23,4 +23,5 @@ public interface EstatisticaRepository extends JpaRepository<Estatistica, Long> 
     List<Estatistica> buscarEstatisticasOndeJogadorFoiMvp(@Param("jogadorId") Long jogadorId);
 
 
+    Object existsByJogadorIdAndPartidaId(long l, long l1);
 }

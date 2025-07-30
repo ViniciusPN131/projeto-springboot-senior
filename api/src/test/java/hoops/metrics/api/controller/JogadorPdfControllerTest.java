@@ -59,6 +59,7 @@ class JogadorPdfControllerTest {
         Clube clube = new Clube();
         return new Jogador(new DadosCadastroJogador(
                 "Jogador Teste",
+                "12345678900",
                 LocalDate.of(1990, 1, 1),
                 190,
                 85.5f,

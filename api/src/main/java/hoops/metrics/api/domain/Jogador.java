@@ -31,6 +31,8 @@ public class Jogador {
 
     private LocalDate data_nascimento;
 
+    private String cpf;
+
     @ManyToOne
     @JoinColumn(name = "clube_id")
     private Clube clube;

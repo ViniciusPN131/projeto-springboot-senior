@@ -43,4 +43,11 @@ public interface ClubeRepository extends JpaRepository<Clube, Long> {
             """, nativeQuery = true)
     Long contarVitoriasPorClube(@Param("clubeId") Long clubeId);
 
+    @Query(value = """
+            
+            SELECT NOT EXISTS (select 1 from clubes where tecnico_id = :tecnicoId) AS tecnicoEmUso
+            
+            """, nativeQuery = true)
+    Boolean verificarSeTecnicoEstaDisponivel(@Param("tecnicoId") Long tecnicoId);
+
 }

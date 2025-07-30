@@ -5,6 +5,7 @@ import hoops.metrics.api.dto.clube.DadosCadastroClube;
 import hoops.metrics.api.dto.clube.DadosDetalhamentoClube;
 import hoops.metrics.api.dto.clube.DadosListagemClube;
 import hoops.metrics.api.service.ClubeService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -50,8 +51,10 @@ public class ClubeController {
     @DeleteMapping("/{id}")
     @Transactional
     public ResponseEntity deletarClube(@PathVariable Long id) {
-        clubeService.excluir(id);
-        return ResponseEntity.noContent().build();
+        if (clubeService.excluir(id)) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.notFound().build();
     }
 
     @GetMapping("/clube/vitorias/{clubeId}")

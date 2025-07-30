@@ -40,6 +40,7 @@ public class EstatisticaController {
     @Transactional
     public ResponseEntity<DadosDetalhamentoEstatistica> cadastrar(@RequestBody @Valid DadosCadastroEstatistica dados, UriComponentsBuilder uriBuilder) {
         DadosDetalhamentoEstatistica estatisticaCriada = estatisticaService.cadastrar(dados);
+        if (estatisticaCriada == null) return ResponseEntity.badRequest().build();
         var uri = uriBuilder.path("/estatisticas/{id}").buildAndExpand(estatisticaCriada.id()).toUri();
         return ResponseEntity.created(uri).body(estatisticaCriada);
     }
@@ -56,14 +57,17 @@ public class EstatisticaController {
     public ResponseEntity<DadosDetalhamentoEstatistica> atualizar(@RequestBody @Valid DadosAtualizacaoEstatistica dados) {
 
         DadosDetalhamentoEstatistica estatisticaAtualizada = estatisticaService.atualizar(dados);
+        if (estatisticaAtualizada == null) return ResponseEntity.badRequest().build();
         return ResponseEntity.ok(estatisticaAtualizada);
     }
 
     @DeleteMapping("/{id}")
     @Transactional
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
-        estatisticaService.excluir(id);
-        return ResponseEntity.noContent().build();
+        boolean validar = estatisticaService.excluir(id);
+        if (validar)
+            return ResponseEntity.noContent().build();
+        return ResponseEntity.notFound().build();
     }
 
 

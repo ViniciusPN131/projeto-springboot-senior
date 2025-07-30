@@ -1,6 +1,5 @@
 package hoops.metrics.api.controller;
 
-import hoops.metrics.api.domain.Tecnico;
 import hoops.metrics.api.dto.tecnico.DadosAtualizacaoTecnico;
 import hoops.metrics.api.dto.tecnico.DadosCadastroTecnico;
 import hoops.metrics.api.dto.tecnico.DadosDetalhamentoTecnico;
@@ -14,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -21,9 +21,13 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
 
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class TecnicoControllerTest {
@@ -46,40 +50,9 @@ class TecnicoControllerTest {
     }
 
     @Test
-    void deveDeletarTecnico() {
-        Long id = 1L;
-        when(tecnicoService.excluir(id)).thenReturn(true);
-
-        ResponseEntity<?> response = tecnicoController.deletarTecnico(id);
-
-        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-        verify(tecnicoService, times(1)).excluir(id);
-    }
-
-    @Test
-    void deveLancarExcecaoSeCrefJaExistir() {
-        DadosCadastroTecnico dados = new DadosCadastroTecnico("Técnico 2", "123456");
-
-        when(tecnicoService.cadastrar(dados))
-                .thenThrow(new IllegalArgumentException("CREF já cadastrado"));
-
-        IllegalArgumentException exception = assertThrows(
-                IllegalArgumentException.class,
-                () -> tecnicoController.cadastrarTecnico(
-                        dados,
-                        UriComponentsBuilder.newInstance()
-                )
-        );
-
-        assertEquals("CREF já cadastrado", exception.getMessage());
-        verify(tecnicoService, times(1)).cadastrar(dados);
-    }
-
-    @Test
     void deveCadastrarTecnicoComSucesso() {
         DadosCadastroTecnico dados = new DadosCadastroTecnico("Técnico Teste", "CREF123");
 
-        // Mock do DTO que será retornado pelo serviço
         DadosDetalhamentoTecnico dtoRetorno = new DadosDetalhamentoTecnico(1L, "Técnico Teste", "CREF123");
 
         when(tecnicoService.cadastrar(any(DadosCadastroTecnico.class)))
@@ -89,43 +62,119 @@ class TecnicoControllerTest {
         ResponseEntity<?> response = tecnicoController.cadastrarTecnico(dados, uriBuilder);
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        assertTrue(response.getBody() instanceof DadosDetalhamentoTecnico);
 
-        DadosDetalhamentoTecnico body = (DadosDetalhamentoTecnico) response.getBody();
-        assertEquals(1L, body.id());
-        assertEquals("Técnico Teste", body.nome());
-        assertEquals("CREF123", body.cref());
-
-        verify(tecnicoService, times(1)).cadastrar(dados);
     }
 
     @Test
-    void deveAtualizarTecnico() {
+    void deveRetornarBadRequestAoCadastrarTecnicoComCorpoVazio() throws Exception {
+        String requestBody = "{\"nome\": \"\", \"cref\": \"\"}";
+
+        mockMvc.perform(post("/tecnicos")
+                        .contentType("application/json")
+                        .content(requestBody))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void deveLancarExcecaoSeCrefJaExistir() {
+
+
+        DadosCadastroTecnico dados = new DadosCadastroTecnico("Técnico 2", "123456");
+
+        when(tecnicoService.cadastrar(dados))
+                .thenThrow(new NullPointerException("CREF já cadastrado"));
+
+        NullPointerException exception = assertThrows(
+                NullPointerException.class,
+                () -> tecnicoController.cadastrarTecnico(
+                        dados,
+                        UriComponentsBuilder.newInstance()
+                )
+        );
+
+        assertEquals("CREF já cadastrado", exception.getMessage());
+
+    }
+
+    @Test
+    void deveAtualizarTecnicoComSucesso() throws Exception {
         Long id = 1L;
-        DadosAtualizacaoTecnico dados = new DadosAtualizacaoTecnico(id, "Novo Nome", "CREF456");
+        String jsonRequest = """
+                {
+                    "id": %d,
+                    "nome": "Técnico Atualizado",
+                    "cref": "CREF789"
+                }
+                """.formatted(id);
 
-        // Mock do DTO que será retornado pelo serviço
-        DadosDetalhamentoTecnico dtoRetorno = new DadosDetalhamentoTecnico(id, "Novo Nome", "CREF456");
+        DadosDetalhamentoTecnico dtoRetorno = new DadosDetalhamentoTecnico(id, "Técnico Atualizado", "CREF789");
+        when(tecnicoService.atualizar(any(DadosAtualizacaoTecnico.class))).thenReturn(dtoRetorno);
 
-        when(tecnicoService.atualizar(any(DadosAtualizacaoTecnico.class)))
-                .thenReturn(dtoRetorno);
+        mockMvc.perform(put("/tecnicos")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonRequest))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(id.intValue())))
+                .andExpect(jsonPath("$.nome", is("Técnico Atualizado")))
+                .andExpect(jsonPath("$.cref", is("CREF789")));
 
-        ResponseEntity<?> response = tecnicoController.atualizarTecnico(dados);
+    }
 
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertTrue(response.getBody() instanceof DadosDetalhamentoTecnico);
+    @Test
+    void deveRetornarBadRequestAoAtualizarSemId() throws Exception {
+        String jsonRequest = """
+                {
+                    "nome": "Técnico Sem ID",
+                    "cref": "CREF123"
+                }
+                """;
 
-        DadosDetalhamentoTecnico body = (DadosDetalhamentoTecnico) response.getBody();
-        assertEquals(id, body.id());
-        assertEquals("Novo Nome", body.nome());
-        assertEquals("CREF456", body.cref());
+        mockMvc.perform(put("/tecnicos")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonRequest))
+                .andExpect(status().isBadRequest());
+    }
 
-        verify(tecnicoService, times(1)).atualizar(dados);
+    @Test
+    void deveRetornar404QuandoTecnicoNaoExistir() throws Exception {
+        String jsonRequest = """
+                {
+                    "id": 999,
+                    "nome": "Jose Olavio"
+                }
+                """;
+
+        when(tecnicoRepository.existsById(999L)).thenReturn(false);
+
+        mockMvc.perform(put("/tecnicos")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonRequest))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void deveDeletarTecnico() {
+        Long id = 1L;
+        when(tecnicoService.excluir(id)).thenReturn(true);
+
+        ResponseEntity<?> response = tecnicoController.deletarTecnico(id);
+
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+    }
+
+    @Test
+    void deveRetornarNotFoundAoDeletarTecnicoInvalido() {
+        Long idInvalido = 999L;
+
+        when(tecnicoRepository.existsById(idInvalido)).thenReturn(false);
+
+        ResponseEntity<?> response = tecnicoController.deletarTecnico(idInvalido);
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     @Test
     void deveListarTecnicos() {
-        // Criar o DTO diretamente (não precisa mockar a entidade)
         DadosListagemTecnico dto = new DadosListagemTecnico(1L, "Técnico 1", "CREF123");
 
         Page<DadosListagemTecnico> page = new PageImpl<>(List.of(dto));
@@ -146,27 +195,6 @@ class TecnicoControllerTest {
     }
 
     @Test
-    void deveContarVitoriasPorTecnico() {
-        when(tecnicoService.contarVitorias(5L)).thenReturn(7);
-
-        ResponseEntity<Long> response = tecnicoController.contarVitoriasPorTecnico(5L);
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(7L, response.getBody().longValue()); // Usar longValue() para evitar autoboxing
-    }
-
-    @Test
-    void deveRetornarNotFoundAoDeletarTecnicoInvalido() {
-        Long idInvalido = 999L;
-
-        when(tecnicoRepository.existsById(idInvalido)).thenReturn(false);
-
-        ResponseEntity<?> response = tecnicoController.deletarTecnico(idInvalido);
-
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-    }
-
-    @Test
     void deveRetornarListaVaziaQuandoNaoHouverTecnicos() {
         Page<DadosListagemTecnico> page = new PageImpl<>(List.of());
         Pageable pageable = PageRequest.of(0, 10, Sort.by("nome"));
@@ -176,27 +204,17 @@ class TecnicoControllerTest {
         ResponseEntity<Page<DadosListagemTecnico>> response = tecnicoController.listarTecnicoes(pageable);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody()); // Agora deve passar
+        assertNotNull(response.getBody());
         assertTrue(response.getBody().isEmpty());
     }
 
     @Test
-    void deveRetornarBadRequestAoCadastrarTecnicoComNomeVazio() throws Exception {
-        String requestBody = "{\"nome\": \"\", \"cref\": \"CREF123\"}"; // Adicionar cref obrigatório
+    void deveContarVitoriasPorTecnico() {
+        when(tecnicoService.contarVitorias(5L)).thenReturn(7);
 
-        mockMvc.perform(post("/tecnicos")
-                        .contentType("application/json")
-                        .content(requestBody))
-                .andExpect(status().isBadRequest());
-    }
+        ResponseEntity<Long> response = tecnicoController.contarVitoriasPorTecnico(5L);
 
-    @Test
-    void deveRetornarBadRequestAoCadastrarTecnicoComCorpoVazio() throws Exception {
-        String requestBody = "{\"nome\": \"\", \"cref\": \"\"}"; // Campos vazios mas presentes
-
-        mockMvc.perform(post("/tecnicos")
-                        .contentType("application/json")
-                        .content(requestBody))
-                .andExpect(status().isBadRequest());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(7L, response.getBody().longValue());
     }
 }

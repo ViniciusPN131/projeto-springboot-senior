@@ -3,188 +3,56 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sistema de Gerenciamento de Basquete</title>
+  <title>Menu</title>
   <style>
-    * {
+    body {
       margin: 0;
       padding: 0;
-      box-sizing: border-box;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-    
-    body {
-      background-color: #f5f5f5;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      background: url('https://images.unsplash.com/photo-1546519638-68e109498ffc?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80') no-repeat center center fixed;
-      background-size: cover;
-      position: relative;
-    }
-    
-    body::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.6);
-      z-index: 0;
+      font-family: Arial, sans-serif;
     }
     
     .container {
+      margin: 20px;
       text-align: center;
-      max-width: 800px;
-      padding: 40px;
-      background-color: rgba(255, 255, 255, 0.9);
-      border-radius: 15px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-      position: relative;
-      z-index: 1;
-      border: 3px solid #ff5e14;
+    }
+    
+    .botoes-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-top: 30px;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    
+    .botao {
+      padding: 15px 10px;
+      font-size: 16px;
+      cursor: pointer;
+      border: 1px solid #ccc;
+      background-color: #fff;
     }
     
     h1 {
-      color: #2c3e50;
-      margin-bottom: 40px;
-      font-size: 2.5rem;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      font-weight: 800;
+      font-size: 24px;
+      margin-top: 20px;
     }
-    
-    .logo {
-      width: 100px;
-      margin-bottom: 20px;
-    }
-    
-    .buttons-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 20px;
-    }
-    
-    .menu-button {
-      padding: 25px;
-      border: none;
-      border-radius: 10px;
-      color: white;
-      font-size: 1.2rem;
-      font-weight: bold;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 150px;
-      background-size: cover;
-      position: relative;
-      overflow: hidden;
-      text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
-    }
-    
-    .menu-button::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.4);
-      z-index: -1;
-    }
-    
-    .menu-button:hover {
-      transform: translateY(-5px) scale(1.03);
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-    }
-    
-    .menu-button i {
-      font-size: 2.5rem;
-      margin-bottom: 15px;
-    }
-    
-    .jogadores {
-      background: linear-gradient(45deg, rgba(25, 25, 112, 0.8), rgba(0, 0, 139, 0.8)), url('https://images.unsplash.com/photo-1547347298-4074fc3086f0?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');
-      background-size: cover;
-    }
-    
-    .tecnicos {
-      background: linear-gradient(45deg, rgba(0, 100, 0, 0.8), rgba(34, 139, 34, 0.8)), url('https://images.unsplash.com/photo-1519861531473-9200262188bf?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');
-      background-size: cover;
-    }
-    
-    .clubes {
-      background: linear-gradient(45deg, rgba(139, 0, 0, 0.8), rgba(178, 34, 34, 0.8)), url('https://images.unsplash.com/photo-1521412644187-c49fa049e84d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');
-      background-size: cover;
-    }
-    
-    .partidas {
-      background: linear-gradient(45deg, rgba(47, 79, 79, 0.8), rgba(0, 128, 128, 0.8)), url('https://images.unsplash.com/photo-1513151233558-d860c5398176?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');
-      background-size: cover;
-    }
-    
-    footer {
-      margin-top: 40px;
-      color: #2c3e50;
-      font-size: 0.9rem;
-      font-weight: bold;
-    }
-    
-    @media (max-width: 600px) {
-      .buttons-grid {
-        grid-template-columns: 1fr;
-      }
-      
-      .container {
-        padding: 20px;
-        width: 90%;
-      }
-      
-      h1 {
-        font-size: 1.8rem;
-      }
+    .botao:hover {
+      background-color: #f5f5f5;
     }
   </style>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
   <div class="container">
-    <h1>
-      <i class="fas fa-basketball-ball" style="color: #ff5e14;"></i>
-      Sistema de Basquete
-      <i class="fas fa-basketball-ball" style="color: #ff5e14;"></i>
-    </h1>
-    
-    <div class="buttons-grid">
-      <button class="menu-button jogadores" onclick="window.location.href='jogadores.html'">
-        <i class="fas fa-users"></i>
-        Jogadores
-      </button>
-      
-      <button class="menu-button tecnicos" onclick="window.location.href='tecnicos.html'">
-        <i class="fas fa-clipboard-list"></i>
-        Técnicos
-      </button>
-      
-      <button class="menu-button clubes" onclick="window.location.href='clubes.html'">
-        <i class="fas fa-tshirt"></i>
-        Clubes
-      </button>
-      
-      <button class="menu-button partidas" onclick="window.location.href='partidas.html'">
-        <i class="fas fa-calendar-alt"></i>
-        Partidas
-      </button>
+    <h1>HOOPS METRICS</h1>
+
+    <div class="botoes-grid">
+      <button class="botao" onclick="window.location.href='tecnicos.html'">TÉCNICOS</button>
+      <button class="botao" onclick="window.location.href='clubes.html'">CLUBES</button>
+      <button class="botao" onclick="window.location.href='jogadores.html'">JOGADORES</button>
+      <button class="botao" onclick="window.location.href='partidas.html'">PARTIDAS</button>
     </div>
-    
-    <footer>
-      Sistema desenvolvido para gerenciamento de partidas de basquete - © 2023
-    </footer>
   </div>
 </body>
 </html>

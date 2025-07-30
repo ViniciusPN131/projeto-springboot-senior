@@ -4,6 +4,7 @@ import hoops.metrics.api.domain.Partida;
 import hoops.metrics.api.dto.partida.*;
 import hoops.metrics.api.repository.ClubeRepository;
 import hoops.metrics.api.repository.PartidaRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -51,9 +52,13 @@ public class PartidaService {
     }
 
     @Transactional
-    public void excluir(Long id) {
+    public boolean excluir(Long id) {
+        if (!partidaRepository.existsById(id)) {
+            return false;
+        }
         Partida partida = partidaRepository.getReferenceById(id);
         partida.excluir();
+        return true;
     }
 
     public DadosResultadoPartida buscarResultado(Long partidaId) {

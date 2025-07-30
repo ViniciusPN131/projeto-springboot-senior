@@ -51,6 +51,7 @@ class PdfServiceTest {
         Clube clube = new Clube(); // Supondo que Clube tenha um construtor padrão
         return new Jogador(new DadosCadastroJogador(
                 "Jogador Teste",
+                "12345678900",
                 LocalDate.of(1990, 1, 1),
                 190,
                 85.5f,

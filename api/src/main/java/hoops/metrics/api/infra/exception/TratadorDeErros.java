@@ -8,6 +8,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -15,6 +16,17 @@ import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class TratadorDeErros {
+
+    @ExceptionHandler(ResponseStatusException.class)
+    public ResponseEntity<ErrorResponse> handleResponseStatusException(ResponseStatusException ex, WebRequest request) {
+        ErrorResponse response = new ErrorResponse(
+                LocalDateTime.now(),
+                ex.getStatusCode().value(),
+                ex.getReason(),
+                request.getDescription(false)
+        );
+        return ResponseEntity.status(ex.getStatusCode()).body(response);
+    }
 
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<ErrorResponse> tratarErro404(WebRequest request) {
@@ -37,7 +49,17 @@ public class TratadorDeErros {
         return ResponseEntity.badRequest().body(erros);
     }
 
-    // Adicione para outros tipos de exceções
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorResponse> tratarErroRegraDeNegocio(IllegalArgumentException ex, WebRequest request) {
+        ErrorResponse response = new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                ex.getMessage(),
+                request.getDescription(false)
+        );
+        return ResponseEntity.badRequest().body(response);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> tratarErro500(Exception ex, WebRequest request) {
         ErrorResponse response = new ErrorResponse(
@@ -49,7 +71,6 @@ public class TratadorDeErros {
         return ResponseEntity.internalServerError().body(response);
     }
 
-    // DTO melhorado para erros genéricos
     public record ErrorResponse(
             LocalDateTime timestamp,
             int status,
@@ -57,27 +78,9 @@ public class TratadorDeErros {
             String path
     ) {}
 
-    // Mantido seu DTO de validação (corrigindo typo em "menssagem")
-    public record DadosErroValidacao(
-            String campo,
-            String mensagem
-    ) {
+    public record DadosErroValidacao(String campo, String mensagem) {
         public DadosErroValidacao(FieldError erro) {
             this(erro.getField(), erro.getDefaultMessage());
         }
-    }
-
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ErrorResponse> tratarErroRegraDeNegocio(
-            IllegalArgumentException ex,
-            WebRequest request
-    ) {
-        ErrorResponse response = new ErrorResponse(
-                LocalDateTime.now(),
-                HttpStatus.BAD_REQUEST.value(),
-                ex.getMessage(), // Mensagem da exceção (ex: "CREF já cadastrado!")
-                request.getDescription(false)
-        );
-        return ResponseEntity.badRequest().body(response);
     }
 }

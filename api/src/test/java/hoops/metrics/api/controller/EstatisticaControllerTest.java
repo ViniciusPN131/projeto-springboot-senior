@@ -7,7 +7,9 @@ import hoops.metrics.api.dto.estatistica.DadosAtualizacaoEstatistica;
 import hoops.metrics.api.dto.estatistica.DadosCadastroEstatistica;
 import hoops.metrics.api.dto.estatistica.DadosDetalhamentoEstatistica;
 import hoops.metrics.api.dto.estatistica.DadosListagemEstatistica;
+import hoops.metrics.api.repository.EstatisticaRepository;
 import hoops.metrics.api.service.EstatisticaService;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -36,6 +38,9 @@ class EstatisticaControllerTest {
     @InjectMocks
     private EstatisticaController estatisticaController;
 
+    @Mock
+    private EstatisticaRepository estatisticaRepository;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -55,6 +60,31 @@ class EstatisticaControllerTest {
         assertNotNull(response.getHeaders().getLocation());
         assertNotNull(response.getBody());
         assertEquals(detalhamento, response.getBody());
+    }
+
+    @Test
+    void deveAtualizarEstatistica() {
+        DadosAtualizacaoEstatistica dados = new DadosAtualizacaoEstatistica(1L, 25, 6, 8, 3, 2, 1);
+        DadosDetalhamentoEstatistica detalhamento = new DadosDetalhamentoEstatistica(1L, 1L, 2L, 25, 6, 8, 3, 2, 1);
+
+        when(estatisticaService.atualizar(dados)).thenReturn(detalhamento);
+
+        ResponseEntity<DadosDetalhamentoEstatistica> response = estatisticaController.atualizar(dados);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(detalhamento, response.getBody());
+    }
+
+    @Test
+    void deveDeletarEstatistica() {
+        Long id = 1L;
+        when(estatisticaService.excluir(id)).thenReturn(true);
+
+        ResponseEntity<Void> response = estatisticaController.deletar(id);
+
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+        verify(estatisticaService).excluir(id);
     }
 
     @Test
@@ -83,28 +113,66 @@ class EstatisticaControllerTest {
         assertEquals(dados, response.getBody().getContent().get(0));
     }
 
+    //====================cadastrar invalido============================================================================
     @Test
-    void deveAtualizarEstatistica() {
-        DadosAtualizacaoEstatistica dados = new DadosAtualizacaoEstatistica(1L, 25, 6, 8, 3, 2, 1);
-        DadosDetalhamentoEstatistica detalhamento = new DadosDetalhamentoEstatistica(1L, 1L, 2L, 25, 6, 8, 3, 2, 1);
+    void deveRetornarBadRequestAoCadastrarEstatisticaComDadosInvalidos() {
+        DadosCadastroEstatistica dados = new DadosCadastroEstatistica(
+                null,
+                null,
+                -1,
+                -1,
+                -1,
+                -1,
+                -1,
+                -1
+        );
 
-        when(estatisticaService.atualizar(dados)).thenReturn(detalhamento);
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString("http://localhost");
+        ResponseEntity<DadosDetalhamentoEstatistica> response = estatisticaController.cadastrar(dados, uriBuilder);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
+    //====================cadastrar ja existente============================================================================
+    @Test
+    void deveRetornarConflictAoCadastrarEstatisticaExistente() {
+        DadosCadastroEstatistica dados = new DadosCadastroEstatistica(1L, 2L, 20, 5, 7, 2, 1, 2);
+
+        when(estatisticaRepository.existsByJogadorIdAndPartidaId(1L, 2L)).thenReturn(true);
+
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString("http://localhost");
+        ResponseEntity<DadosDetalhamentoEstatistica> response = estatisticaController.cadastrar(dados, uriBuilder);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
+    //====================atualizar invalido============================================================================
+    @Test
+    void deveRetornarBadRequestAoAtualizarEstatisticaComDadosInvalidos() {
+        DadosAtualizacaoEstatistica dados = new DadosAtualizacaoEstatistica(
+                null,
+                -1,
+                -1,
+                -1,
+                -1,
+                -1,
+                -1
+        );
 
         ResponseEntity<DadosDetalhamentoEstatistica> response = estatisticaController.atualizar(dados);
 
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertEquals(detalhamento, response.getBody());
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
+    //====================deletar invalido==============================================================================
     @Test
-    void deveDeletarEstatistica() {
-        Long id = 1L;
-        doNothing().when(estatisticaService).excluir(id);
+    void deveRetornarNotFoundAoDeletarEstatisticaInexistente() {
+        Long idInexistente = 999L;
 
-        ResponseEntity<Void> response = estatisticaController.deletar(id);
+        when(estatisticaRepository.existsById(idInexistente)).thenReturn(false);
 
-        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-        verify(estatisticaService).excluir(id);
+        ResponseEntity<Void> response = estatisticaController.deletar(idInexistente);
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 }

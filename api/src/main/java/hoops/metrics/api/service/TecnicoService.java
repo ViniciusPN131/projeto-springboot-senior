@@ -7,11 +7,14 @@ import hoops.metrics.api.dto.tecnico.DadosCadastroTecnico;
 import hoops.metrics.api.dto.tecnico.DadosDetalhamentoTecnico;
 import hoops.metrics.api.dto.tecnico.DadosListagemTecnico;
 import hoops.metrics.api.repository.TecnicoRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class TecnicoService {
@@ -40,17 +43,20 @@ public class TecnicoService {
     }
 
     @Transactional
-    public DadosDetalhamentoTecnico atualizar(@Valid DadosAtualizacaoTecnico dados) {
+    public DadosDetalhamentoTecnico atualizar(DadosAtualizacaoTecnico dados) {
 
-        var tecnico = tecnicoRepository.getReferenceById(dados.id());
+        if (!tecnicoRepository.existsById(dados.id())) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Técnico não encontrado");
+        }
+        Tecnico tecnico = tecnicoRepository.findById(dados.id()).get();
         tecnico.atualizarInformacoes(dados);
         return new DadosDetalhamentoTecnico(tecnico);
-
     }
+
 
     @Transactional
     public boolean excluir(Long id) {
-        if(tecnicoRepository.existsById(id)) {
+        if (tecnicoRepository.existsById(id)) {
             var tecnico = tecnicoRepository.getReferenceById(id);
             tecnico.excluir();
             return true;

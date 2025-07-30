@@ -5,183 +5,81 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Perfil do Jogador</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-    
     body {
-      background-color: #f5f5f5;
-      min-height: 100vh;
-      background: url('https://images.unsplash.com/photo-1546519638-68e109498ffc?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80') no-repeat center center fixed;
-      background-size: cover;
-      position: relative;
+      margin: 0;
       padding: 20px;
-    }
-    
-    body::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.6);
-      z-index: 0;
+      font-family: Arial, sans-serif;
     }
     
     .container {
       max-width: 1000px;
       margin: 0 auto;
-      padding: 30px;
-      background-color: rgba(255, 255, 255, 0.9);
-      border-radius: 15px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-      position: relative;
-      z-index: 1;
-      border: 3px solid #ff5e14;
+      padding: 20px;
+      border: 1px solid #ddd;
     }
     
     h1 {
-      color: #2c3e50;
-      margin-bottom: 30px;
-      font-size: 2.2rem;
       text-align: center;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      font-weight: 800;
-    }
-    
-    h1 i {
-      color: #ff5e14;
-      margin: 0 10px;
+      margin-bottom: 20px;
     }
     
     .info-jogador {
-      background: rgba(255, 255, 255, 0.8);
-      border-radius: 10px;
-      padding: 20px;
-      margin-bottom: 30px;
-      border-left: 5px solid #ff5e14;
+      padding: 15px;
+      margin-bottom: 20px;
+      border: 1px solid #ddd;
     }
     
     .info-jogador p {
       margin: 10px 0;
-      font-size: 1.1rem;
-      color: #2c3e50;
-    }
-    
-    .info-jogador strong {
-      color: #ff5e14;
-      font-weight: 600;
-      display: inline-block;
-      width: 180px;
     }
     
     .stats-container {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 20px;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-bottom: 20px;
     }
     
     .stat-card {
-      background: rgba(255, 255, 255, 0.8);
-      border-radius: 10px;
-      padding: 20px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      border-left: 5px solid #ff5e14;
+      padding: 15px;
+      border: 1px solid #ddd;
       text-align: center;
     }
     
     .stat-value {
-      font-size: 2.5rem;
-      font-weight: 800;
-      color: #ff5e14;
-      margin: 10px 0;
-    }
-    
-    .stat-label {
-      font-size: 1rem;
-      color: #2c3e50;
-      font-weight: 600;
-    }
-    
-    .loading {
-      color: #2c3e50;
-      text-align: center;
-      padding: 30px;
-      font-style: italic;
-    }
-    
-    .error {
-      color: #e74c3c;
-      text-align: center;
-      padding: 20px;
+      font-size: 1.5rem;
+      margin: 5px 0;
       font-weight: bold;
-      background-color: rgba(255, 255, 255, 0.8);
-      border-radius: 5px;
     }
     
-    .warning {
-      color: #FF9800;
+    .loading, .warning, .error {
+      padding: 10px;
+      margin: 10px 0;
       text-align: center;
-      padding: 15px;
-      font-style: italic;
-      background-color: rgba(255, 255, 255, 0.8);
-      border-radius: 5px;
     }
     
     .voltar-btn {
-      display: inline-block;
-      margin-top: 30px;
-      padding: 12px 25px;
-      background: linear-gradient(45deg, #2c3e50, #34495e);
-      color: white;
-      text-decoration: none;
-      border-radius: 5px;
-      font-weight: bold;
-      transition: all 0.3s ease;
-      border: none;
+      padding: 10px 15px;
+      margin-top: 20px;
       cursor: pointer;
-    }
-    
-    .voltar-btn:hover {
-      background: linear-gradient(45deg, #34495e, #2c3e50);
-      transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     }
     
     @media (max-width: 768px) {
       .stats-container {
         grid-template-columns: 1fr;
       }
-      
-      .container {
-        padding: 20px;
-      }
-      
-      .info-jogador strong {
-        width: 120px;
-      }
     }
   </style>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
   <div class="container">
-    <h1>
-      <i class="fas fa-basketball-ball"></i>
-      Perfil do Jogador
-      <i class="fas fa-basketball-ball"></i>
-    </h1>
+    <h1>Perfil do Jogador</h1>
     
     <div class="info-jogador">
       <p><strong>ID do Jogador:</strong> <span id="jogador-id"></span></p>
     </div>
     
-    <h2 style="text-align: center; color: #2c3e50; margin-bottom: 20px;">Estatísticas Gerais</h2>
+    <h2 style="text-align: center; margin-bottom: 15px;">Estatísticas Gerais</h2>
     
     <div class="loading" id="loading">Carregando estatísticas...</div>
     <div class="warning" id="warning" style="display: none;">
@@ -221,13 +119,10 @@
       </div>
     </div>
     
-    <button class="voltar-btn" onclick="window.location.href='javascript:history.back()'">
-      <i class="fas fa-arrow-left"></i> Voltar
-    </button>
+    <button class="voltar-btn" onclick="window.location.href='javascript:history.back()'">Voltar</button>
   </div>
 
   <script>
-    // Função para zerar todas as estatísticas
     function zerarEstatisticas() {
       document.getElementById('total-pontos').textContent = '0';
       document.getElementById('turnovers').textContent = '0';
@@ -235,11 +130,9 @@
       document.getElementById('roubos-bola').textContent = '0';
       document.getElementById('rebotes-ofensivos').textContent = '0';
       document.getElementById('rebotes-defensivos').textContent = '0';
-      
       document.getElementById('warning').style.display = 'block';
     }
 
-    // Função para carregar e exibir estatísticas
     function carregarEstatisticas(jogadorId) {
       document.getElementById('loading').style.display = 'block';
       document.getElementById('warning').style.display = 'none';
@@ -277,7 +170,6 @@
         });
     }
 
-    // Obtém o ID do jogador da URL
     const urlParams = new URLSearchParams(window.location.search);
     const jogadorId = urlParams.get('id');
 

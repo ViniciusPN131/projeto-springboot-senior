@@ -5,7 +5,10 @@ import hoops.metrics.api.dto.estatistica.DadosAtualizacaoEstatistica;
 import hoops.metrics.api.dto.estatistica.DadosCadastroEstatistica;
 import hoops.metrics.api.dto.estatistica.DadosDetalhamentoEstatistica;
 import hoops.metrics.api.dto.estatistica.DadosListagemEstatistica;
-import hoops.metrics.api.repository.*;
+import hoops.metrics.api.repository.EstatisticaRepository;
+import hoops.metrics.api.repository.JogadorRepository;
+import hoops.metrics.api.repository.PartidaRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -52,9 +55,13 @@ public class EstatisticaService {
 
     }
 
-    public void excluir(Long id) {
-
-        estatisticaRepository.deleteById(id);
-
+    public boolean excluir(Long id) {
+        if (estatisticaRepository.existsById(id)) {
+            estatisticaRepository.deleteById(id);
+            return true;
+        }
+        return false;
     }
+
+
 }

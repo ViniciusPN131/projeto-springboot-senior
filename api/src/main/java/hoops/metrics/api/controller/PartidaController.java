@@ -35,7 +35,7 @@ public class PartidaController {
     @Transactional
     public ResponseEntity cadastrarPartida(@RequestBody @Valid DadosCadastroPartida dados, UriComponentsBuilder uriBuilder) {
         DadosDetalhamentoPartida partidaCriada = partidaService.cadastrar(dados);
-
+        if (partidaCriada == null) return ResponseEntity.badRequest().build();
         var uri = uriBuilder.path("/partidas/{id}").buildAndExpand(partidaCriada.id()).toUri();
         return ResponseEntity.created(uri).body(partidaCriada);
     }
@@ -51,14 +51,17 @@ public class PartidaController {
     @Transactional
     public ResponseEntity atualizarPartida(@RequestBody @Valid DadosAtualizacaoPartida dados) {
         DadosDetalhamentoPartida partidaAtualizada = partidaService.atualizar(dados);
+        if (partidaAtualizada == null) return ResponseEntity.badRequest().build();
         return ResponseEntity.ok(partidaAtualizada);
     }
 
     @DeleteMapping("/{id}")
     @Transactional
-    public ResponseEntity deletarPartida(@PathVariable Long id) {
-        partidaService.excluir(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<Void> deletarPartida(@PathVariable Long id) {
+        if (partidaService.excluir(id)) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.notFound().build();
     }
 
     @GetMapping("/resultado/{partidaId}")

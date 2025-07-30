@@ -30,8 +30,11 @@ public class ClubeService {
                 .orElseThrow(() -> new EntityNotFoundException("Técnico não encontrado"));
         var clube = new Clube(dados);
         clube.setTecnico(tecnico);
-        clubeRepository.save(clube);
-        return new DadosDetalhamentoClube(clube);
+        if (clubeRepository.verificarSeTecnicoEstaDisponivel(dados.tecnico_id())) {
+            clubeRepository.save(clube);
+            return new DadosDetalhamentoClube(clube);
+        }
+        throw new IllegalArgumentException("Tecnico ja em uso");
     }
 
     public Page<DadosListagemClube> listarAtivos(Pageable paginacao) {
@@ -46,9 +49,13 @@ public class ClubeService {
     }
 
     @Transactional
-    public void excluir(Long id) {
-        var clube = clubeRepository.getReferenceById(id);
-        clube.excluir();
+    public boolean excluir(Long id) {
+        if (clubeRepository.existsById(id)) {
+            var clube = clubeRepository.getReferenceById(id);
+            clube.excluir();
+            return true;
+        }
+        return false;
     }
 
     public Long contarVitorias(Long clubeId) {
