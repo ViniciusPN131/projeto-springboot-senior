@@ -1,9 +1,6 @@
 package hoops.metrics.api.controller;
 
-import hoops.metrics.api.dto.clube.DadosAtualizacaoClube;
-import hoops.metrics.api.dto.clube.DadosCadastroClube;
-import hoops.metrics.api.dto.clube.DadosDetalhamentoClube;
-import hoops.metrics.api.dto.clube.DadosListagemClube;
+import hoops.metrics.api.dto.clube.*;
 import hoops.metrics.api.service.ClubeService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
@@ -58,8 +55,8 @@ public class ClubeController {
     }
 
     @GetMapping("/clube/vitorias/{clubeId}")
-    public ResponseEntity<Long> contarVitoriasPorClube(@PathVariable Long clubeId) {
-        Long total = clubeService.contarVitorias(clubeId);
+    public ResponseEntity<DadosDetalhamentoVitoriasClube> contarVitoriasPorClube(@PathVariable Long clubeId) {
+        var total = clubeService.contarVitorias(clubeId);
         return ResponseEntity.ok(total);
     }
 }

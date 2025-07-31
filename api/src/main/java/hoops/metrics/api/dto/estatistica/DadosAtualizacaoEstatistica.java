@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 public record DadosAtualizacaoEstatistica(
         @NotNull Long id,
         Integer totalPontos,
+        Integer assistencias,
         Integer totalFaltas,
         Integer rebotesOfensivos,
         Integer rebotesDefensivos,

@@ -64,7 +64,8 @@ class JogadorPdfControllerTest {
                 190,
                 85.5f,
                 Posicao.ALA,
-                clube
+                1L,
+                null
         ));
     }
 
@@ -79,6 +80,7 @@ class JogadorPdfControllerTest {
                         5,
                         7,
                         2,
+                        1,
                         1
                 ),
                 jogador,

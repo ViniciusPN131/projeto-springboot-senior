@@ -71,31 +71,165 @@ INSERT INTO partidas (local, data_hora, clube_mandante_id, clube_visitante_id) V
 ('Arena SP', '2025-07-15T10:00', 2, 1);
 
 -- Estatísticas da Partida 1
-INSERT INTO estatisticas (jogador_id, partida_id, total_pontos, total_faltas, rebotes_ofensivos, rebotes_defensivos, roubos_de_bola, turnovers) VALUES
+INSERT INTO estatisticas (jogador_id, partida_id, total_pontos, assistencias, total_faltas, rebotes_ofensivos, rebotes_defensivos, roubos_de_bola, turnovers) VALUES
 -- Tubarões FC
-(1, 1, 18, 2, 3, 5, 2, 1),
-(2, 1, 12, 3, 4, 6, 1, 2),
-(3, 1, 10, 1, 2, 3, 1, 1),
-(4, 1, 8, 2, 1, 2, 0, 1),
-(5, 1, 14, 2, 3, 4, 2, 0),
+(1, 1, 20, 3, 2, 3, 5, 2, 1),
+(2, 1, 16, 2, 3, 4, 6, 1, 2),
+(3, 1, 10, 0, 1, 2, 3, 1, 1),
+(4, 1, 8, 7, 2, 1, 2, 0, 1),
+(5, 1, 14, 1, 2, 3, 4, 2, 0),
 -- Águias SC
-(6, 1, 20, 1, 2, 4, 3, 0),
-(7, 1, 15, 2, 3, 3, 2, 1),
-(8, 1, 10, 3, 4, 5, 1, 2),
-(9, 1, 9, 2, 2, 2, 1, 1),
-(10, 1, 11, 1, 3, 3, 2, 0);
+(6, 1, 20, 1, 1, 2, 4, 3, 0),
+(7, 1, 15, 3, 2, 3, 3, 2, 1),
+(8, 1, 10, 1, 3, 4, 5, 1, 2),
+(9, 1, 9, 3, 2, 2, 2, 1, 1),
+(10, 1, 11, 5, 1, 3, 3, 2, 0);
 
 -- Estatísticas da Partida 2
-INSERT INTO estatisticas (jogador_id, partida_id, total_pontos, total_faltas, rebotes_ofensivos, rebotes_defensivos, roubos_de_bola, turnovers) VALUES
+INSERT INTO estatisticas (jogador_id, partida_id, total_pontos, assistencias, total_faltas, rebotes_ofensivos, rebotes_defensivos, roubos_de_bola, turnovers) VALUES
 -- Águias SC
-(6, 2, 22, 1, 5, 7, 1, 1),
-(7, 2, 10, 2, 2, 5, 0, 3),
-(8, 2, 17, 2, 3, 4, 2, 2),
-(9, 2, 13, 1, 2, 3, 1, 1),
-(10, 2, 16, 2, 3, 4, 2, 1),
+(6, 2, 22, 2, 1, 5, 7, 1, 1),
+(7, 2, 10, 2, 2, 2, 5, 0, 3),
+(8, 2, 17, 2, 2, 3, 4, 2, 2),
+(9, 2, 13, 2, 1, 2, 3, 1, 1),
+(10, 2, 16, 2, 2, 3, 4, 2, 1),
 -- Tubarões FC
-(1, 2, 19, 2, 4, 6, 2, 1),
-(2, 2, 10, 1, 2, 5, 1, 2),
-(3, 2, 14, 2, 3, 3, 2, 1),
-(4, 2, 11, 1, 2, 2, 1, 0),
-(5, 2, 17, 3, 4, 5, 2, 2);
+(1, 2, 19, 2, 2, 4, 6, 2, 1),
+(2, 2, 10, 2, 1, 2, 5, 1, 2),
+(3, 2, 14, 2, 2, 3, 3, 2, 1),
+(4, 2, 11, 2, 1, 2, 2, 1, 0),
+(5, 2, 17, 2, 3, 4, 5, 2, 2);
+
+
+--=======================================================================================================================================================================================
+
+-- Partidas adicionais
+INSERT INTO partidas (local, data_hora, clube_mandante_id, clube_visitante_id) VALUES
+('Ginásio de Blumenau', '2025-07-20T19:30', 3, 4),
+('Arena Caxias', '2025-07-22T20:00', 4, 3),
+('Ginásio do Tarumã', '2025-07-25T19:00', 5, 6),
+('Arena Natal', '2025-07-28T20:30', 6, 5),
+('Ginásio Vitória', '2025-08-01T18:00', 7, 1),
+('Ginásio RJ', '2025-08-05T19:00', 1, 7),
+('Arena SP', '2025-08-10T20:00', 2, 3),
+('Ginásio de Blumenau', '2025-08-15T19:30', 3, 2);
+
+-- Estatísticas para Partida 3 (APAB x Caxias)
+INSERT INTO estatisticas (jogador_id, partida_id, total_pontos, assistencias, total_faltas, rebotes_ofensivos, rebotes_defensivos, roubos_de_bola, turnovers) VALUES
+-- APAB
+(11, 3, 18, 4, 2, 2, 5, 3, 2),
+(12, 3, 12, 2, 3, 3, 4, 1, 1),
+(13, 3, 15, 1, 4, 5, 7, 0, 3),
+(14, 3, 9, 5, 2, 1, 3, 2, 1),
+(15, 3, 14, 3, 1, 2, 4, 1, 0),
+-- Caxias
+(16, 3, 22, 2, 2, 4, 6, 2, 1),
+(17, 3, 10, 3, 1, 2, 3, 1, 2),
+(18, 3, 16, 1, 3, 6, 8, 0, 2),
+(19, 3, 8, 4, 2, 1, 2, 2, 1),
+(20, 3, 12, 2, 1, 3, 5, 1, 0);
+
+-- Estatísticas para Partida 4 (Caxias x APAB)
+INSERT INTO estatisticas (jogador_id, partida_id, total_pontos, assistencias, total_faltas, rebotes_ofensivos, rebotes_defensivos, roubos_de_bola, turnovers) VALUES
+-- Caxias
+(16, 4, 20, 3, 1, 3, 5, 2, 1),
+(17, 4, 14, 2, 2, 2, 4, 1, 1),
+(18, 4, 18, 0, 3, 7, 9, 1, 2),
+(19, 4, 6, 5, 2, 1, 3, 1, 0),
+(20, 4, 10, 4, 1, 2, 4, 2, 1),
+-- APAB
+(11, 4, 15, 5, 2, 1, 4, 3, 2),
+(12, 4, 11, 3, 3, 2, 3, 1, 1),
+(13, 4, 12, 1, 4, 4, 6, 0, 3),
+(14, 4, 8, 4, 2, 1, 2, 2, 0),
+(15, 4, 16, 2, 1, 3, 5, 1, 1);
+
+-- Estatísticas para Partida 5 (ACU x Noal Goats)
+INSERT INTO estatisticas (jogador_id, partida_id, total_pontos, assistencias, total_faltas, rebotes_ofensivos, rebotes_defensivos, roubos_de_bola, turnovers) VALUES
+-- ACU
+(21, 5, 25, 3, 1, 4, 6, 2, 1),
+(22, 5, 12, 2, 2, 2, 3, 1, 2),
+(23, 5, 14, 1, 3, 5, 7, 0, 2),
+(24, 5, 8, 4, 2, 1, 2, 2, 1),
+(25, 5, 11, 3, 1, 2, 4, 1, 0),
+-- Noal Goats
+(26, 5, 18, 4, 2, 3, 5, 3, 2),
+(27, 5, 14, 2, 1, 2, 4, 1, 1),
+(28, 5, 16, 1, 3, 6, 8, 0, 2),
+(29, 5, 9, 3, 2, 1, 3, 2, 1),
+(30, 5, 12, 2, 1, 2, 4, 1, 0);
+
+-- Estatísticas para Partida 6 (Noal Goats x ACU)
+INSERT INTO estatisticas (jogador_id, partida_id, total_pontos, assistencias, total_faltas, rebotes_ofensivos, rebotes_defensivos, roubos_de_bola, turnovers) VALUES
+-- Noal Goats
+(26, 6, 22, 3, 1, 4, 5, 2, 1),
+(27, 6, 15, 2, 2, 3, 4, 1, 1),
+(28, 6, 18, 1, 3, 7, 9, 0, 2),
+(29, 6, 10, 4, 2, 1, 2, 2, 0),
+(30, 6, 14, 2, 1, 2, 3, 1, 1),
+-- ACU
+(21, 6, 20, 4, 1, 3, 5, 3, 2),
+(22, 6, 11, 3, 2, 2, 3, 1, 1),
+(23, 6, 13, 1, 3, 4, 6, 0, 2),
+(24, 6, 7, 5, 2, 1, 2, 2, 1),
+(25, 6, 15, 3, 1, 2, 4, 1, 0);
+
+-- Estatísticas para Partida 7 (Game Winners x Tubarões)
+INSERT INTO estatisticas (jogador_id, partida_id, total_pontos, assistencias, total_faltas, rebotes_ofensivos, rebotes_defensivos, roubos_de_bola, turnovers) VALUES
+-- Game Winners
+(31, 7, 24, 4, 1, 3, 5, 3, 1),
+(32, 7, 16, 3, 2, 2, 4, 2, 1),
+(33, 7, 12, 1, 3, 5, 7, 0, 2),
+(34, 7, 10, 5, 2, 1, 3, 2, 0),
+(35, 7, 14, 2, 1, 2, 4, 1, 1),
+-- Tubarões
+(1, 7, 18, 3, 2, 2, 4, 2, 2),
+(2, 7, 14, 2, 3, 4, 6, 1, 1),
+(3, 7, 10, 4, 1, 1, 3, 1, 1),
+(4, 7, 8, 6, 2, 1, 2, 0, 0),
+(5, 7, 16, 2, 2, 3, 5, 2, 1);
+
+-- Estatísticas para Partida 8 (Tubarões x Game Winners)
+INSERT INTO estatisticas (jogador_id, partida_id, total_pontos, assistencias, total_faltas, rebotes_ofensivos, rebotes_defensivos, roubos_de_bola, turnovers) VALUES
+-- Tubarões
+(1, 8, 22, 4, 1, 3, 5, 3, 1),
+(2, 8, 16, 2, 2, 5, 7, 1, 2),
+(3, 8, 14, 3, 1, 2, 3, 1, 1),
+(4, 8, 12, 5, 2, 1, 2, 2, 0),
+(5, 8, 18, 2, 1, 4, 6, 2, 1),
+-- Game Winners
+(31, 8, 20, 3, 2, 2, 4, 2, 2),
+(32, 8, 12, 4, 1, 1, 3, 1, 1),
+(33, 8, 16, 1, 3, 6, 8, 0, 2),
+(34, 8, 8, 6, 2, 1, 2, 2, 0),
+(35, 8, 14, 2, 1, 2, 3, 1, 1);
+
+-- Estatísticas para Partida 9 (Águias x APAB)
+INSERT INTO estatisticas (jogador_id, partida_id, total_pontos, assistencias, total_faltas, rebotes_ofensivos, rebotes_defensivos, roubos_de_bola, turnovers) VALUES
+-- Águias
+(6, 9, 26, 3, 1, 4, 6, 2, 1),
+(7, 9, 14, 4, 2, 2, 3, 1, 1),
+(8, 9, 18, 1, 3, 7, 9, 0, 2),
+(9, 9, 10, 5, 2, 1, 2, 2, 0),
+(10, 9, 16, 2, 1, 3, 5, 1, 1),
+-- APAB
+(11, 9, 20, 4, 2, 2, 4, 3, 2),
+(12, 9, 12, 3, 1, 1, 3, 1, 1),
+(13, 9, 14, 1, 4, 5, 7, 0, 3),
+(14, 9, 8, 6, 2, 1, 2, 2, 0),
+(15, 9, 15, 3, 1, 2, 4, 1, 1);
+
+-- Estatísticas para Partida 10 (APAB x Águias)
+INSERT INTO estatisticas (jogador_id, partida_id, total_pontos, assistencias, total_faltas, rebotes_ofensivos, rebotes_defensivos, roubos_de_bola, turnovers) VALUES
+-- APAB
+(11, 10, 24, 5, 1, 3, 5, 4, 1),
+(12, 10, 16, 3, 2, 2, 4, 2, 1),
+(13, 10, 12, 1, 3, 6, 8, 0, 2),
+(14, 10, 10, 7, 2, 1, 3, 2, 0),
+(15, 10, 18, 2, 1, 3, 5, 1, 1),
+-- Águias
+(6, 10, 22, 4, 2, 3, 5, 3, 2),
+(7, 10, 14, 3, 1, 2, 3, 1, 1),
+(8, 10, 16, 1, 3, 5, 7, 0, 2),
+(9, 10, 8, 6, 2, 1, 2, 2, 0),
+(10, 10, 12, 3, 1, 2, 4, 1, 1);

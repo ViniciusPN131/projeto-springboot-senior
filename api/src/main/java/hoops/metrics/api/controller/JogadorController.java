@@ -1,11 +1,9 @@
 package hoops.metrics.api.controller;
 
-import hoops.metrics.api.domain.Jogador;
-import hoops.metrics.api.dto.clube.DadosDetalhamentoClube;
 import hoops.metrics.api.dto.jogador.*;
+import hoops.metrics.api.dto.partida.DadosMvpPartida;
 import hoops.metrics.api.repository.ClubeRepository;
-import hoops.metrics.api.dto.estatistica.DadosGeraisEstatistica;
-import hoops.metrics.api.domain.Estatistica;
+import hoops.metrics.api.dto.jogador.DadosGeraisJogador;
 import hoops.metrics.api.repository.JogadorRepository;
 import hoops.metrics.api.service.JogadorService;
 import jakarta.validation.Valid;
@@ -35,15 +33,14 @@ public class JogadorController {
 
     @PostMapping
     @Transactional
-    public ResponseEntity cadastrarJogador(@RequestBody @Valid DadosPostJogador dadosPost, UriComponentsBuilder uriBuilder){
+    public ResponseEntity cadastrarJogador(@RequestBody @Valid DadosCadastroJogador dados, UriComponentsBuilder uriBuilder){
 
-        Jogador jogadorCriado = jogadorService.cadastrar(dadosPost);
+        DadosDetalhamentoJogador jogadorCriado = jogadorService.cadastrar(dados);
 
-        if (jogadorCriado==null)
-        return ResponseEntity.badRequest().build();
+        if (jogadorCriado==null) return ResponseEntity.badRequest().build();
 
-        var uri = uriBuilder.path("/jogadores/{id}").buildAndExpand(jogadorCriado.getId()).toUri();
-        return ResponseEntity.created(uri).body(new DadosDetalhamentoJogador(jogadorCriado));
+        var uri = uriBuilder.path("/jogadores/{id}").buildAndExpand(jogadorCriado.id()).toUri();
+        return ResponseEntity.created(uri).body(jogadorCriado);
     }
 
     @GetMapping
@@ -76,14 +73,14 @@ public class JogadorController {
     }
 
     @GetMapping("/jogador/mvp/{partidaId}")
-    public ResponseEntity<List<Estatistica>> buscarMvpDaPartida(@PathVariable Long partidaId) {
-        var mvps = jogadorRepository.buscarMvpDaPartida(partidaId);
+    public ResponseEntity<List<DadosMvpPartida>> buscarMvpDaPartida(@PathVariable Long partidaId) {
+        List<DadosMvpPartida> mvps = jogadorRepository.buscarMvpDaPartida(partidaId);
         return ResponseEntity.ok(mvps);
     }
 
     @GetMapping("/jogador/geral/{jogadorId}")
-    public ResponseEntity<DadosGeraisEstatistica> estatisticasGeraisPorJogador(@PathVariable Long jogadorId) {
-        DadosGeraisEstatistica resultado = jogadorRepository.estatisticasGeraisPorJogador(jogadorId);
+    public ResponseEntity<DadosGeraisJogador> estatisticasGeraisPorJogador(@PathVariable Long jogadorId) {
+        DadosGeraisJogador resultado = jogadorRepository.estatisticasGeraisPorJogador(jogadorId);
         if (resultado==null) return ResponseEntity.badRequest().build();
         var jogador = jogadorRepository.findById(jogadorId).orElseThrow(() -> new RuntimeException("Jogador não encontrado"));
 

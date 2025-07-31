@@ -2,10 +2,7 @@ package hoops.metrics.api.controller;
 
 import hoops.metrics.api.domain.Clube;
 import hoops.metrics.api.domain.Tecnico;
-import hoops.metrics.api.dto.clube.DadosAtualizacaoClube;
-import hoops.metrics.api.dto.clube.DadosCadastroClube;
-import hoops.metrics.api.dto.clube.DadosDetalhamentoClube;
-import hoops.metrics.api.dto.clube.DadosListagemClube;
+import hoops.metrics.api.dto.clube.*;
 import hoops.metrics.api.repository.ClubeRepository;
 import hoops.metrics.api.repository.TecnicoRepository;
 import hoops.metrics.api.service.ClubeService;
@@ -182,9 +179,9 @@ class ClubeControllerTest {
     @Test
     void deveContarVitoriasPorClube() {
         Long id = 3L;
-        when(clubeService.contarVitorias(id)).thenReturn(12L);
+        when(clubeService.contarVitorias(id)).thenReturn(new DadosDetalhamentoVitoriasClube(1L, 10));
 
-        ResponseEntity<Long> response = clubeController.contarVitoriasPorClube(id);
+        ResponseEntity<DadosDetalhamentoVitoriasClube> response = clubeController.contarVitoriasPorClube(id);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(12L, response.getBody());

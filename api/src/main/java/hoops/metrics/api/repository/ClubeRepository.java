@@ -1,6 +1,7 @@
 package hoops.metrics.api.repository;
 
 import hoops.metrics.api.domain.Clube;
+import hoops.metrics.api.dto.clube.DadosDetalhamentoVitoriasClube;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,7 +12,7 @@ public interface ClubeRepository extends JpaRepository<Clube, Long> {
     Page<Clube> findAllByAtivoTrue(Pageable paginacao);
 
     @Query(value = """
-                SELECT COUNT(*) FROM partidas p
+                SELECT COUNT(*) AS qtdVitoriasClube, :clubeId AS clubeId FROM partidas p
                 WHERE (
                     p.clube_mandante_id = :clubeId AND
                     (
@@ -41,7 +42,7 @@ public interface ClubeRepository extends JpaRepository<Clube, Long> {
                     )
                 )
             """, nativeQuery = true)
-    Long contarVitoriasPorClube(@Param("clubeId") Long clubeId);
+    DadosDetalhamentoVitoriasClube contarVitoriasPorClube(@Param("clubeId") Long clubeId);
 
     @Query(value = """
             

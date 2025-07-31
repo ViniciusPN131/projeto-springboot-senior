@@ -16,55 +16,57 @@ CASCADE;
 
 -- Tabela de técnicos
 CREATE TABLE tecnicos (
-    id SERIAL PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     nome VARCHAR(255) NOT NULL,
-	cref VARCHAR(255) UNIQUE NOT NULL,
+    cref VARCHAR(255) UNIQUE NOT NULL,
     ativo BOOLEAN DEFAULT TRUE
 );
 
 -- Tabela de clubes
 CREATE TABLE clubes (
-    id SERIAL PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     nome VARCHAR(255) NOT NULL,
-    sigla VARCHAR(5),
+    sigla VARCHAR(255),
     cidade VARCHAR(255),
     estado VARCHAR(255),
     ativo BOOLEAN DEFAULT TRUE,
-    tecnico_id INTEGER UNIQUE,
+    tecnico_id BIGINT UNIQUE,
     CONSTRAINT fk_tecnico FOREIGN KEY (tecnico_id) REFERENCES tecnicos(id)
 );
 
 -- Tabela de jogadores
 CREATE TABLE jogadores (
-    id SERIAL PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     nome VARCHAR(255) NOT NULL,
-    posicao VARCHAR(50),
+    posicao VARCHAR(255),
     altura INTEGER,
     peso REAL,
     data_nascimento DATE,
-    clube_id INTEGER,
+    cpf VARCHAR(255),
+    clube_id BIGINT,
     ativo BOOLEAN DEFAULT TRUE,
     CONSTRAINT fk_clube FOREIGN KEY (clube_id) REFERENCES clubes(id)
 );
 
 -- Tabela de partidas
 CREATE TABLE partidas (
-    id SERIAL PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     local VARCHAR(255),
     data_hora TIMESTAMP,
-	ativo BOOLEAN DEFAULT TRUE,
-    clube_mandante_id INTEGER NOT NULL,
-    clube_visitante_id INTEGER NOT NULL,
+    ativo BOOLEAN DEFAULT TRUE,
+    clube_mandante_id BIGINT NOT NULL,
+    clube_visitante_id BIGINT NOT NULL,
     CONSTRAINT fk_clube_mandante FOREIGN KEY (clube_mandante_id) REFERENCES clubes(id),
     CONSTRAINT fk_clube_visitante FOREIGN KEY (clube_visitante_id) REFERENCES clubes(id)
 );
 
 -- Tabela de estatísticas
 CREATE TABLE estatisticas (
-    id SERIAL PRIMARY KEY,
-    jogador_id INTEGER NOT NULL,
-    partida_id INTEGER NOT NULL,
+    id BIGSERIAL PRIMARY KEY,
+    jogador_id BIGINT NOT NULL,
+    partida_id BIGINT NOT NULL,
     total_pontos INTEGER,
+	assistencias INTEGER,
     total_faltas INTEGER,
     rebotes_ofensivos INTEGER,
     rebotes_defensivos INTEGER,
@@ -72,5 +74,46 @@ CREATE TABLE estatisticas (
     turnovers INTEGER,
     CONSTRAINT fk_est_jogador FOREIGN KEY (jogador_id) REFERENCES jogadores(id),
     CONSTRAINT fk_est_partida FOREIGN KEY (partida_id) REFERENCES partidas(id),
-	UNIQUE(jogador_id, partida_id)
+    UNIQUE(jogador_id, partida_id)
 );
+
+CREATE OR REPLACE FUNCTION validar_jogador_na_partida()
+RETURNS TRIGGER AS $$
+DECLARE
+    v_clube_jogador_id BIGINT;
+    v_clube_mandante_id BIGINT;
+    v_clube_visitante_id BIGINT;
+    v_jogador_pertence BOOLEAN;
+BEGIN
+    -- Obter o clube do jogador
+    SELECT clube_id INTO v_clube_jogador_id 
+    FROM jogadores 
+    WHERE id = NEW.jogador_id;
+    
+    -- Obter os clubes da partida
+    SELECT p.clube_mandante_id, p.clube_visitante_id 
+    INTO v_clube_mandante_id, v_clube_visitante_id
+    FROM partidas p
+    WHERE p.id = NEW.partida_id;
+    
+    -- Verificar se o jogador pertence a um dos clubes
+    v_jogador_pertence := (v_clube_jogador_id = v_clube_mandante_id OR v_clube_jogador_id = v_clube_visitante_id);
+    
+    IF NOT v_jogador_pertence THEN
+        RAISE EXCEPTION 'Jogador (ID: %) não pertence a nenhum dos clubes da partida (ID: %)', 
+                        NEW.jogador_id, NEW.partida_id;
+    END IF;
+    
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER tr_validar_jogador_na_partida_insert
+BEFORE INSERT ON estatisticas
+FOR EACH ROW
+EXECUTE FUNCTION validar_jogador_na_partida();
+
+CREATE TRIGGER tr_validar_jogador_na_partida_update
+BEFORE UPDATE ON estatisticas
+FOR EACH ROW
+EXECUTE FUNCTION validar_jogador_na_partida();

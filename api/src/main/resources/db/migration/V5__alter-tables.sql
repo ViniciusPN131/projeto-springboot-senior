@@ -1,0 +1,23 @@
+-- Alterações na tabela clubes
+ALTER TABLE clubes ALTER COLUMN id SET DATA TYPE BIGINT;
+ALTER TABLE clubes ALTER COLUMN sigla SET DATA TYPE VARCHAR(255);
+ALTER TABLE clubes ALTER COLUMN tecnico_id SET DATA TYPE BIGINT;
+
+-- Alterações na tabela estatisticas
+ALTER TABLE estatisticas ALTER COLUMN id SET DATA TYPE BIGINT;
+ALTER TABLE estatisticas ALTER COLUMN jogador_id SET DATA TYPE BIGINT;
+ALTER TABLE estatisticas ALTER COLUMN partida_id SET DATA TYPE BIGINT;
+
+-- Alterações na tabela jogadores
+ALTER TABLE jogadores ALTER COLUMN id SET DATA TYPE BIGINT;
+ALTER TABLE jogadores ADD COLUMN IF NOT EXISTS cpf VARCHAR(255);
+ALTER TABLE jogadores ALTER COLUMN posicao SET DATA TYPE VARCHAR(255);
+ALTER TABLE jogadores ALTER COLUMN clube_id SET DATA TYPE BIGINT;
+
+-- Alterações na tabela partidas
+ALTER TABLE partidas ALTER COLUMN id SET DATA TYPE BIGINT;
+ALTER TABLE partidas ALTER COLUMN clube_mandante_id SET DATA TYPE BIGINT;
+ALTER TABLE partidas ALTER COLUMN clube_visitante_id SET DATA TYPE BIGINT;
+
+-- Alterações na tabela tecnicos
+ALTER TABLE tecnicos ALTER COLUMN id SET DATA TYPE BIGINT;

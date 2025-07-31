@@ -48,8 +48,8 @@ class EstatisticaControllerTest {
 
     @Test
     void deveCadastrarEstatisticaComSucesso() {
-        DadosCadastroEstatistica dados = new DadosCadastroEstatistica(1L, 2L, 20, 5, 7, 2, 1, 2);
-        DadosDetalhamentoEstatistica detalhamento = new DadosDetalhamentoEstatistica(1L, 1L, 2L, 20, 5, 7, 2, 1, 2);
+        DadosCadastroEstatistica dados = new DadosCadastroEstatistica(1L, 2L, 20, 5, 7, 2, 1, 2, 1);
+        DadosDetalhamentoEstatistica detalhamento = new DadosDetalhamentoEstatistica(1L, 1L, 1L, 1, 1, 1, 1, 1, 1, 1);
 
         when(estatisticaService.cadastrar(dados)).thenReturn(detalhamento);
 
@@ -64,8 +64,8 @@ class EstatisticaControllerTest {
 
     @Test
     void deveAtualizarEstatistica() {
-        DadosAtualizacaoEstatistica dados = new DadosAtualizacaoEstatistica(1L, 25, 6, 8, 3, 2, 1);
-        DadosDetalhamentoEstatistica detalhamento = new DadosDetalhamentoEstatistica(1L, 1L, 2L, 25, 6, 8, 3, 2, 1);
+        DadosAtualizacaoEstatistica dados = new DadosAtualizacaoEstatistica(1L, 25, 6, 8, 3, 2, 1, 1);
+        DadosDetalhamentoEstatistica detalhamento = new DadosDetalhamentoEstatistica(1L, 1L, 2L, 25, 6, 8, 3, 2, 1, 1);
 
         when(estatisticaService.atualizar(dados)).thenReturn(detalhamento);
 
@@ -124,6 +124,7 @@ class EstatisticaControllerTest {
                 -1,
                 -1,
                 -1,
+                -1,
                 -1
         );
 
@@ -136,7 +137,7 @@ class EstatisticaControllerTest {
     //====================cadastrar ja existente============================================================================
     @Test
     void deveRetornarConflictAoCadastrarEstatisticaExistente() {
-        DadosCadastroEstatistica dados = new DadosCadastroEstatistica(1L, 2L, 20, 5, 7, 2, 1, 2);
+        DadosCadastroEstatistica dados = new DadosCadastroEstatistica(1L, 2L, 20, 5, 7, 2, 1, 2, 1);
 
         when(estatisticaRepository.existsByJogadorIdAndPartidaId(1L, 2L)).thenReturn(true);
 
@@ -151,6 +152,7 @@ class EstatisticaControllerTest {
     void deveRetornarBadRequestAoAtualizarEstatisticaComDadosInvalidos() {
         DadosAtualizacaoEstatistica dados = new DadosAtualizacaoEstatistica(
                 null,
+                -1,
                 -1,
                 -1,
                 -1,

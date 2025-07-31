@@ -2,9 +2,11 @@ package hoops.metrics.api.domain;
 
 import hoops.metrics.api.dto.jogador.DadosAtualizacaoJogador;
 import hoops.metrics.api.dto.jogador.DadosCadastroJogador;
+import hoops.metrics.api.repository.ClubeRepository;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import lombok.*;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
 
@@ -33,6 +35,7 @@ public class Jogador {
 
     private String cpf;
 
+    @Setter
     @ManyToOne
     @JoinColumn(name = "clube_id")
     private Clube clube;

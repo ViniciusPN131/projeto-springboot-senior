@@ -29,6 +29,7 @@ public class Estatistica {
     private Partida partida;
 
     private int totalPontos;
+    private int assistencias;
     private int totalFaltas;
     private int rebotesOfensivos;
     private int rebotesDefensivos;
@@ -39,6 +40,7 @@ public class Estatistica {
         this.jogador = jogador;
         this.partida = partida;
         this.totalPontos = dados.totalPontos();
+        this.assistencias = dados.assistencias();
         this.totalFaltas = dados.totalFaltas();
         this.rebotesOfensivos = dados.rebotesOfensivos();
         this.rebotesDefensivos = dados.rebotesDefensivos();
@@ -48,6 +50,7 @@ public class Estatistica {
 
     public void atualizarInformacoes(DadosAtualizacaoEstatistica dados) {
         if (dados.totalPontos() != null) this.totalPontos = dados.totalPontos();
+        if (dados.assistencias() != null) this.assistencias = dados.assistencias();
         if (dados.totalFaltas() != null) this.totalFaltas = dados.totalFaltas();
         if (dados.rebotesOfensivos() != null) this.rebotesOfensivos = dados.rebotesOfensivos();
         if (dados.rebotesDefensivos() != null) this.rebotesDefensivos = dados.rebotesDefensivos();

@@ -1,10 +1,12 @@
 package hoops.metrics.api.service;
 
+import hoops.metrics.api.domain.Clube;
 import hoops.metrics.api.domain.Jogador;
 import hoops.metrics.api.dto.clube.DadosDetalhamentoClube;
 import hoops.metrics.api.dto.jogador.*;
 import hoops.metrics.api.repository.ClubeRepository;
 import hoops.metrics.api.repository.JogadorRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -23,20 +25,25 @@ public class JogadorService {
     private JogadorRepository jogadorRepository;
 
     @Transactional
-    public Jogador cadastrar(@Valid DadosPostJogador dadosPost) {
+    public DadosDetalhamentoJogador cadastrar(@Valid DadosCadastroJogador dados) {
 
-        var dados = validarJogador(dadosPost);
-
-        if (dados != null) {
-
-            var jogador = new Jogador(dados);
-
-            jogadorRepository.save(jogador);
-
-            return jogador;
+        if (jogadorRepository.existsByCpf(dados.cpf())){
+            throw new IllegalArgumentException("CPF já cadastrado!");
+        }
+        if (dados==null){
+            return null;
+        }
+        if (!clubeRepository.existsById(dados.clube_id())){
+            throw new EntityNotFoundException("Tecnico não encontrado");
         }
 
-        return null;
+        Clube clube = clubeRepository.findById(dados.clube_id()).get();
+        Jogador jogador = new Jogador(dados);
+        jogador.setClube(clube);
+
+        jogadorRepository.save(jogador);
+
+        return new DadosDetalhamentoJogador(jogador);
 
     }
 
@@ -52,23 +59,6 @@ public class JogadorService {
         var jogador = jogadorRepository.getReferenceById(dados.id());
         jogador.atualizarInformacoes(dados);
         return new DadosDetalhamentoJogador(jogador);
-
-    }
-
-
-    public DadosCadastroJogador validarJogador(@Valid DadosPostJogador dadosPost) {
-        if (jogadorRepository.existsByCpf(dadosPost.cpf())) {
-            return new DadosCadastroJogador(
-                    dadosPost.nome(),
-                    dadosPost.cpf(),
-                    dadosPost.data_nascimento(),
-                    dadosPost.altura(),
-                    dadosPost.peso(),
-                    dadosPost.posicao(),
-                    clubeRepository.findById(dadosPost.clube_id()).get()
-            );
-        }
-        return null;
 
     }
 

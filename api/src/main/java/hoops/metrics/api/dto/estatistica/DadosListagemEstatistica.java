@@ -4,9 +4,11 @@ import hoops.metrics.api.domain.Estatistica;
 
 public record DadosListagemEstatistica(
         Long id,
-        String jogador,
-        String partida,
+        Long jogadorId,
+        String jogadorNome,
+        Long partidaId,
         Integer totalPontos,
+        Integer assistencias,
         Integer totalFaltas,
         Integer rebotesOfensivos,
         Integer rebotesDefensivos,
@@ -17,9 +19,11 @@ public record DadosListagemEstatistica(
     public DadosListagemEstatistica(Estatistica estatistica) {
         this(
                 estatistica.getId(),
+                estatistica.getJogador().getId(),
                 estatistica.getJogador().getNome(),
-                "Partida #" + estatistica.getPartida().getId(),
+                estatistica.getPartida().getId(),
                 estatistica.getTotalPontos(),
+                estatistica.getAssistencias(),
                 estatistica.getTotalFaltas(),
                 estatistica.getRebotesOfensivos(),
                 estatistica.getRebotesDefensivos(),

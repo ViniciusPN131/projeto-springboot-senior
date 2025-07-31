@@ -1,10 +1,7 @@
 package hoops.metrics.api.service;
 
 import hoops.metrics.api.domain.Clube;
-import hoops.metrics.api.dto.clube.DadosAtualizacaoClube;
-import hoops.metrics.api.dto.clube.DadosCadastroClube;
-import hoops.metrics.api.dto.clube.DadosDetalhamentoClube;
-import hoops.metrics.api.dto.clube.DadosListagemClube;
+import hoops.metrics.api.dto.clube.*;
 import hoops.metrics.api.repository.ClubeRepository;
 import hoops.metrics.api.repository.TecnicoRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -58,7 +55,7 @@ public class ClubeService {
         return false;
     }
 
-    public Long contarVitorias(Long clubeId) {
+    public DadosDetalhamentoVitoriasClube contarVitorias(Long clubeId) {
 
         return clubeRepository.contarVitoriasPorClube(clubeId);
 

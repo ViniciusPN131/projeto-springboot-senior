@@ -32,5 +32,8 @@ public record DadosCadastroJogador(
         @NotNull
         Posicao posicao,
 
-        @NotNull @Valid Clube clube
+        @NotNull
+        Long clube_id,
+
+        Clube clube
 ) {}

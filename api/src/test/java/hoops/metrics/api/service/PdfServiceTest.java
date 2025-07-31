@@ -48,7 +48,7 @@ class PdfServiceTest {
     }
 
     private Jogador criarJogadorValido() {
-        Clube clube = new Clube(); // Supondo que Clube tenha um construtor padrão
+        Clube clube = new Clube();
         return new Jogador(new DadosCadastroJogador(
                 "Jogador Teste",
                 "12345678900",
@@ -56,12 +56,13 @@ class PdfServiceTest {
                 190,
                 85.5f,
                 Posicao.ALA,
+                clube.getId(),
                 clube
         ));
     }
 
     private Estatistica criarEstatisticaValida(Jogador jogador) {
-        Partida partida = new Partida(); // Supondo que Partida tenha um construtor padrão
+        Partida partida = new Partida();
         return new Estatistica(
                 new DadosCadastroEstatistica(
                         jogador.getId(),
@@ -71,6 +72,7 @@ class PdfServiceTest {
                         5,
                         7,
                         2,
+                        1,
                         1
                 ),
                 jogador,

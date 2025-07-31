@@ -1,8 +1,9 @@
-package hoops.metrics.api.dto.estatistica;
+package hoops.metrics.api.dto.jogador;
 
-public interface DadosGeraisEstatistica {
+public interface DadosGeraisJogador {
         Long getJogadorId();
         Integer getTotalPontos();
+        Integer getAssistencias();
         Integer getTotalFaltas();
         Integer getRebotes_ofensivos();
         Integer getRebotes_defensivos();

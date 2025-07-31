@@ -2,12 +2,9 @@
 package hoops.metrics.api.controller;
 
 import hoops.metrics.api.domain.*;
-import hoops.metrics.api.dto.clube.DadosAtualizacaoClube;
-import hoops.metrics.api.dto.clube.DadosCadastroClube;
-import hoops.metrics.api.dto.clube.DadosDetalhamentoClube;
-import hoops.metrics.api.dto.clube.DadosListagemClube;
-import hoops.metrics.api.dto.estatistica.DadosGeraisEstatistica;
+import hoops.metrics.api.dto.jogador.DadosGeraisJogador;
 import hoops.metrics.api.dto.jogador.*;
+import hoops.metrics.api.dto.partida.DadosMvpPartida;
 import hoops.metrics.api.repository.ClubeRepository;
 import hoops.metrics.api.repository.JogadorRepository;
 import hoops.metrics.api.service.JogadorService;
@@ -59,12 +56,10 @@ class JogadorControllerTest {
 
     @Test
     void deveCadastrarJogadorComSucesso() {
-        DadosPostJogador dados = new DadosPostJogador("Clube A", "CLUBE", LocalDate.of(2000, 01, 01), 190, 60.0f, Posicao.ARMADOR, 1L);
-        DadosDetalhamentoJogador dadosJogador = mock(DadosDetalhamentoJogador.class);
+        DadosCadastroJogador dados = new DadosCadastroJogador("Nome", "12345678900", LocalDate.of(2000, 01, 01), 190, 80.0f, Posicao.ARMADOR, 1L, null);
+        DadosDetalhamentoJogador dadosListagem = mock(DadosDetalhamentoJogador.class);
 
-        Jogador jogador = mock(Jogador.class);
-
-        when(jogadorService.cadastrar(dados)).thenReturn(jogador);
+        when(jogadorService.cadastrar(dados)).thenReturn(dadosListagem);
 
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString("http://localhost");
         ResponseEntity response = jogadorController.cadastrarJogador(dados, uriBuilder);
@@ -113,10 +108,10 @@ class JogadorControllerTest {
 
     @Test
     void deveBuscarMvpDaPartida() {
-        Estatistica estatistica = mock(Estatistica.class);
-        when(jogadorRepository.buscarMvpDaPartida(10L)).thenReturn(List.of(estatistica));
+        DadosMvpPartida DadosMvpPartida = mock(DadosMvpPartida.class);
+        when(jogadorRepository.buscarMvpDaPartida(10L)).thenReturn(List.of(DadosMvpPartida));
 
-        ResponseEntity<List<Estatistica>> response = jogadorController.buscarMvpDaPartida(10L);
+        ResponseEntity<List<DadosMvpPartida>> response = jogadorController.buscarMvpDaPartida(10L);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(1, response.getBody().size());
@@ -124,13 +119,13 @@ class JogadorControllerTest {
 
     @Test
     void deveBuscarEstatisticasGeraisPorJogador() {
-        DadosGeraisEstatistica dados = mock(DadosGeraisEstatistica.class);
+        DadosGeraisJogador dados = mock(DadosGeraisJogador.class);
         Jogador jogador = mock(Jogador.class);
 
         when(jogadorRepository.estatisticasGeraisPorJogador(1L)).thenReturn(dados);
         when(jogadorRepository.findById(1L)).thenReturn(Optional.of(jogador));
 
-        ResponseEntity<DadosGeraisEstatistica> response = jogadorController.estatisticasGeraisPorJogador(1L);
+        ResponseEntity<DadosGeraisJogador> response = jogadorController.estatisticasGeraisPorJogador(1L);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(dados, response.getBody());
@@ -138,13 +133,13 @@ class JogadorControllerTest {
 
     @Test
     void deveRetornarBadRequestComIdInvalidoParaEstatsiticasGerais() {
-        DadosGeraisEstatistica dados = mock(DadosGeraisEstatistica.class);
+        DadosGeraisJogador dados = mock(DadosGeraisJogador.class);
         Jogador jogador = mock(Jogador.class);
 
         when(jogadorRepository.estatisticasGeraisPorJogador(1L)).thenReturn(dados);
         when(jogadorRepository.findById(1L)).thenReturn(Optional.of(jogador));
 
-        ResponseEntity<DadosGeraisEstatistica> response = jogadorController.estatisticasGeraisPorJogador(1L);
+        ResponseEntity<DadosGeraisJogador> response = jogadorController.estatisticasGeraisPorJogador(1L);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(dados, response.getBody());
@@ -153,14 +148,8 @@ class JogadorControllerTest {
     //====================cadastrar invalido============================================================================
     @Test
     void deveRetornarBadRequestAoCadastrarJogadorComDadosInvalidos() {
-        DadosPostJogador dadosPost = new DadosPostJogador(
-                "", // Nome vazio
-                "",
-                null, // Data de nascimento nula
-                0, // Altura inválida
-                0, // Peso inválido
-                null, // Posição nula
-                null // ID do clube nulo
+        DadosCadastroJogador dadosPost = new DadosCadastroJogador(
+                "null", "null",null,-1,-1f, null, null, null
         );
 
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString("http://localhost");
