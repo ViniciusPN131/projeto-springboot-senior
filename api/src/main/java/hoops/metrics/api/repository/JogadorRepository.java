@@ -96,7 +96,7 @@ public interface JogadorRepository extends JpaRepository<Jogador, Long> {
                 FROM vitorias_jogador;
             
             """, nativeQuery = true)
-    int quantidadeDeVitoriasDoJogador(@Param("jogadorId") Long jogadorId);
+    Long quantidadeDeVitoriasDoJogador(@Param("jogadorId") Long jogadorId);
 
     boolean existsByCpf(String cpf);
 

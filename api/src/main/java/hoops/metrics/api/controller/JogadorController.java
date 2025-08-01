@@ -2,6 +2,7 @@ package hoops.metrics.api.controller;
 
 import hoops.metrics.api.dto.jogador.*;
 import hoops.metrics.api.dto.partida.DadosMvpPartida;
+import hoops.metrics.api.dto.tecnico.DadosDetalhamentoVitoriasTecnico;
 import hoops.metrics.api.repository.ClubeRepository;
 import hoops.metrics.api.repository.JogadorRepository;
 import hoops.metrics.api.service.JogadorService;
@@ -24,12 +25,6 @@ import static org.springframework.data.web.config.EnableSpringDataWebSupport.Pag
 @RequestMapping("jogadores")
 @EnableSpringDataWebSupport(pageSerializationMode = VIA_DTO)
 public class JogadorController {
-
-    @Autowired
-    private JogadorRepository jogadorRepository;
-
-    @Autowired
-    private ClubeRepository clubeRepository;
 
     @Autowired
     private JogadorService jogadorService;
@@ -77,16 +72,23 @@ public class JogadorController {
 
     @GetMapping("/jogador/mvp/{partidaId}")
     public ResponseEntity<List<DadosMvpPartida>> buscarMvpDaPartida(@PathVariable Long partidaId) {
-        List<DadosMvpPartida> mvps = jogadorRepository.buscarMvpDaPartida(partidaId);
+        List<DadosMvpPartida> mvps = jogadorService.buscarMvpDaPartida(partidaId);
+
+        if (mvps==null) return ResponseEntity.badRequest().build();
         return ResponseEntity.ok(mvps);
     }
 
     @GetMapping("/jogador/geral/{jogadorId}")
     public ResponseEntity<DadosGeraisJogador> estatisticasGeraisPorJogador(@PathVariable Long jogadorId) {
-        if(!jogadorRepository.existsById(jogadorId)) throw new RuntimeException("Jogador não encontrado");
-        DadosGeraisJogador resultado = jogadorRepository.estatisticasGeraisPorJogador(jogadorId);
+        DadosGeraisJogador resultado = jogadorService.estatisticasGerais(jogadorId);
         if (resultado==null) return ResponseEntity.badRequest().build();
         return ResponseEntity.ok(resultado);
+    }
+
+    @GetMapping("/jogador/vitorias/{jogadorId}")
+    public ResponseEntity<DadosDetalhamentoVitoriasJogador> contarVitoriasPorJogador(@PathVariable Long jogadorId) {
+        DadosDetalhamentoVitoriasJogador total = jogadorService.contarVitorias(jogadorId);
+        return ResponseEntity.ok(total);
     }
 
 }

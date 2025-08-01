@@ -42,7 +42,7 @@ class PdfServiceTest {
         Jogador jogador = criarJogadorValido();
         List<Estatistica> estatisticas = List.of(criarEstatisticaValida(jogador));
 
-        byte[] pdf = pdfService.gerarPdfJogador(jogador, estatisticas, 5, new DadosGeraisJogador() {
+        byte[] pdf = pdfService.gerarPdfJogador(jogador, estatisticas, 5L, new DadosGeraisJogador() {
             @Override
             public Long getJogadorId() {
                 return 0L;

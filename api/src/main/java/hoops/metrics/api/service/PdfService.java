@@ -39,7 +39,7 @@ public class PdfService {
         }
 
         List<Estatistica> estatisticasMvp = estatisticaRepository.buscarEstatisticasOndeJogadorFoiMvp(id);
-        int quantidadeDeVitorias = jogadorRepository.quantidadeDeVitoriasDoJogador(id);
+        Long quantidadeDeVitorias = jogadorRepository.quantidadeDeVitoriasDoJogador(id);
 
         try {
             byte[] pdf = gerarPdfJogador(jogador, estatisticasMvp, quantidadeDeVitorias, dadosGeraisJogador);
@@ -52,7 +52,7 @@ public class PdfService {
         }
     }
 
-    public static byte[] gerarPdfJogador(Jogador jogador, List<Estatistica> estatisticasMvp, int quantidadeDeVitorias, DadosGeraisJogador dadosGerais) throws Exception {
+    public static byte[] gerarPdfJogador(Jogador jogador, List<Estatistica> estatisticasMvp, Long quantidadeDeVitorias, DadosGeraisJogador dadosGerais) throws Exception {
         Document document = new Document();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         PdfWriter.getInstance(document, out);
@@ -138,7 +138,6 @@ public class PdfService {
         return out.toByteArray();
     }
 
-    // Método auxiliar para adicionar células formatadas
     private static void addTableCell(PdfPTable table, String label, Font labelFont, String value, Font valueFont) {
         PdfPCell labelCell = new PdfPCell(new Phrase(label, labelFont));
         labelCell.setBorder(Rectangle.NO_BORDER);
@@ -149,7 +148,6 @@ public class PdfService {
         table.addCell(valueCell);
     }
 
-    // Método auxiliar para adicionar estatísticas formatadas
     private static void addStatCell(PdfPTable table, String label, Font labelFont, Object value, Font valueFont) {
         PdfPCell cell = new PdfPCell();
         cell.setBorder(Rectangle.NO_BORDER);

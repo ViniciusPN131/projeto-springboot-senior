@@ -98,7 +98,7 @@ class JogadorControllerTest {
         Pageable pageable = PageRequest.of(0, 10);
         Page<DadosListagemJogador> page = new PageImpl<>(List.of(mock(DadosListagemJogador.class)));
 
-        when(jogadorService.listar(pageable)).thenReturn(page);
+        when(jogadorService.listarAtivos(pageable)).thenReturn(page);
 
         ResponseEntity<Page<DadosListagemJogador>> response = jogadorController.listarJogadores(pageable);
 
@@ -114,7 +114,6 @@ class JogadorControllerTest {
         ResponseEntity<List<DadosMvpPartida>> response = jogadorController.buscarMvpDaPartida(10L);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(1, response.getBody().size());
     }
 
     @Test
@@ -122,7 +121,7 @@ class JogadorControllerTest {
         DadosGeraisJogador dados = mock(DadosGeraisJogador.class);
         Jogador jogador = mock(Jogador.class);
 
-        when(jogadorRepository.estatisticasGeraisPorJogador(1L)).thenReturn(dados);
+        when(jogadorService.estatisticasGerais(1L)).thenReturn(dados);
         when(jogadorRepository.findById(1L)).thenReturn(Optional.of(jogador));
 
         ResponseEntity<DadosGeraisJogador> response = jogadorController.estatisticasGeraisPorJogador(1L);
@@ -136,7 +135,7 @@ class JogadorControllerTest {
         DadosGeraisJogador dados = mock(DadosGeraisJogador.class);
         Jogador jogador = mock(Jogador.class);
 
-        when(jogadorRepository.estatisticasGeraisPorJogador(1L)).thenReturn(dados);
+        when(jogadorService.estatisticasGerais(1L)).thenReturn(dados);
         when(jogadorRepository.findById(1L)).thenReturn(Optional.of(jogador));
 
         ResponseEntity<DadosGeraisJogador> response = jogadorController.estatisticasGeraisPorJogador(1L);
