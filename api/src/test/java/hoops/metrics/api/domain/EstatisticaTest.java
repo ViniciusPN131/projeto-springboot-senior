@@ -17,7 +17,7 @@ class EstatisticaTest {
         Estatistica estatistica = new Estatistica(dados, jogador, partida);
 
         assertEquals(20, estatistica.getTotalPontos());
-        assertEquals(5, estatistica.getRebotesOfensivos());
+        assertEquals(4, estatistica.getRebotesOfensivos());
         assertEquals(jogador, estatistica.getJogador());
     }
 
@@ -25,7 +25,7 @@ class EstatisticaTest {
     void deveAtualizarEstatisticasCorretamente() {
         Estatistica estatistica = new Estatistica(
                 new DadosCadastroEstatistica(
-                        20L, 3L, 30, 2, 10, 4, 5, 1, 1
+                        20L, 3L, 30, 2, 4, 4, 5, 1, 1
                 ),
                 new Jogador(), new Partida()
         );
@@ -36,9 +36,9 @@ class EstatisticaTest {
         estatistica.atualizarInformacoes(dadosAtualizacao);
 
         assertEquals(30, estatistica.getTotalPontos());
-        assertEquals(10, estatistica.getRebotesOfensivos());
-        assertEquals(5, estatistica.getRoubosDeBola());
+        assertEquals(5, estatistica.getRebotesOfensivos());
+        assertEquals(1, estatistica.getRoubosDeBola());
         // Campos não atualizados devem permanecer os mesmos
-        assertEquals(3, estatistica.getTotalFaltas());
+        assertEquals(4, estatistica.getTotalFaltas());
     }
 }

@@ -1,9 +1,6 @@
 package hoops.metrics.api.controller;
 
-import hoops.metrics.api.dto.tecnico.DadosAtualizacaoTecnico;
-import hoops.metrics.api.dto.tecnico.DadosCadastroTecnico;
-import hoops.metrics.api.dto.tecnico.DadosDetalhamentoTecnico;
-import hoops.metrics.api.dto.tecnico.DadosListagemTecnico;
+import hoops.metrics.api.dto.tecnico.*;
 import hoops.metrics.api.repository.TecnicoRepository;
 import hoops.metrics.api.service.TecnicoService;
 import org.junit.jupiter.api.BeforeEach;
@@ -210,11 +207,11 @@ class TecnicoControllerTest {
 
     @Test
     void deveContarVitoriasPorTecnico() {
-        when(tecnicoService.contarVitorias(5L)).thenReturn(7);
+        when(tecnicoService.contarVitorias(5L)).thenReturn(new DadosDetalhamentoVitoriasTecnico(1L, 2L));
 
-        ResponseEntity<Long> response = tecnicoController.contarVitoriasPorTecnico(5L);
+        ResponseEntity<DadosDetalhamentoVitoriasTecnico> response = tecnicoController.contarVitoriasPorTecnico(5L);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(7L, response.getBody().longValue());
+        assertInstanceOf(DadosDetalhamentoVitoriasTecnico.class, response.getBody());
     }
 }

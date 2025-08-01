@@ -1,9 +1,6 @@
 package hoops.metrics.api.controller;
 
-import hoops.metrics.api.dto.tecnico.DadosAtualizacaoTecnico;
-import hoops.metrics.api.dto.tecnico.DadosCadastroTecnico;
-import hoops.metrics.api.dto.tecnico.DadosDetalhamentoTecnico;
-import hoops.metrics.api.dto.tecnico.DadosListagemTecnico;
+import hoops.metrics.api.dto.tecnico.*;
 import hoops.metrics.api.service.TecnicoService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,9 +59,9 @@ public class TecnicoController {
     }
 
     @GetMapping("/tecnico/vitorias/{tecnicoId}")
-    public ResponseEntity<Long> contarVitoriasPorTecnico(@PathVariable Long tecnicoId) {
-        int total = tecnicoService.contarVitorias(tecnicoId);
-        return ResponseEntity.ok(Long.valueOf(total));
+    public ResponseEntity<DadosDetalhamentoVitoriasTecnico> contarVitoriasPorTecnico(@PathVariable Long tecnicoId) {
+        DadosDetalhamentoVitoriasTecnico total = tecnicoService.contarVitorias(tecnicoId);
+        return ResponseEntity.ok(total);
     }
 
 }

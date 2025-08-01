@@ -3,6 +3,7 @@ package hoops.metrics.api.service;
 import hoops.metrics.api.domain.*;
 import hoops.metrics.api.dto.estatistica.DadosCadastroEstatistica;
 import hoops.metrics.api.dto.jogador.DadosCadastroJogador;
+import hoops.metrics.api.dto.jogador.DadosGeraisJogador;
 import hoops.metrics.api.repository.EstatisticaRepository;
 import hoops.metrics.api.repository.JogadorRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,7 +42,47 @@ class PdfServiceTest {
         Jogador jogador = criarJogadorValido();
         List<Estatistica> estatisticas = List.of(criarEstatisticaValida(jogador));
 
-        byte[] pdf = pdfService.gerarPdfJogador(jogador, estatisticas, 5);
+        byte[] pdf = pdfService.gerarPdfJogador(jogador, estatisticas, 5, new DadosGeraisJogador() {
+            @Override
+            public Long getJogadorId() {
+                return 0L;
+            }
+
+            @Override
+            public Integer getTotalPontos() {
+                return 0;
+            }
+
+            @Override
+            public Integer getAssistencias() {
+                return 0;
+            }
+
+            @Override
+            public Integer getTotalFaltas() {
+                return 0;
+            }
+
+            @Override
+            public Integer getRebotes_ofensivos() {
+                return 0;
+            }
+
+            @Override
+            public Integer getRebotes_defensivos() {
+                return 0;
+            }
+
+            @Override
+            public Integer getRoubos_de_bola() {
+                return 0;
+            }
+
+            @Override
+            public Integer getTurnovers() {
+                return 0;
+            }
+        });
 
         assertNotNull(pdf);
         assertTrue(pdf.length > 0);

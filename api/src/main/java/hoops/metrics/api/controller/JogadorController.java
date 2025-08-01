@@ -3,7 +3,6 @@ package hoops.metrics.api.controller;
 import hoops.metrics.api.dto.jogador.*;
 import hoops.metrics.api.dto.partida.DadosMvpPartida;
 import hoops.metrics.api.repository.ClubeRepository;
-import hoops.metrics.api.dto.jogador.DadosGeraisJogador;
 import hoops.metrics.api.repository.JogadorRepository;
 import hoops.metrics.api.service.JogadorService;
 import jakarta.validation.Valid;
@@ -11,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.config.EnableSpringDataWebSupport;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -18,8 +18,11 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
 
+import static org.springframework.data.web.config.EnableSpringDataWebSupport.PageSerializationMode.VIA_DTO;
+
 @RestController
 @RequestMapping("jogadores")
+@EnableSpringDataWebSupport(pageSerializationMode = VIA_DTO)
 public class JogadorController {
 
     @Autowired
@@ -46,7 +49,7 @@ public class JogadorController {
     @GetMapping
     public ResponseEntity<Page<DadosListagemJogador>> listarJogadores(@PageableDefault(size = 10, sort = {"nome"}) Pageable paginacao){
 
-        Page page = jogadorService.listar(paginacao);
+        Page page = jogadorService.listarAtivos(paginacao);
 
         return  ResponseEntity.ok(page);
 
@@ -80,10 +83,9 @@ public class JogadorController {
 
     @GetMapping("/jogador/geral/{jogadorId}")
     public ResponseEntity<DadosGeraisJogador> estatisticasGeraisPorJogador(@PathVariable Long jogadorId) {
+        if(!jogadorRepository.existsById(jogadorId)) throw new RuntimeException("Jogador não encontrado");
         DadosGeraisJogador resultado = jogadorRepository.estatisticasGeraisPorJogador(jogadorId);
         if (resultado==null) return ResponseEntity.badRequest().build();
-        var jogador = jogadorRepository.findById(jogadorId).orElseThrow(() -> new RuntimeException("Jogador não encontrado"));
-
         return ResponseEntity.ok(resultado);
     }
 

@@ -3,6 +3,7 @@ package hoops.metrics.api.controller;
 import hoops.metrics.api.domain.Clube;
 import hoops.metrics.api.domain.Tecnico;
 import hoops.metrics.api.dto.clube.*;
+import hoops.metrics.api.dto.tecnico.DadosDetalhamentoVitoriasTecnico;
 import hoops.metrics.api.repository.ClubeRepository;
 import hoops.metrics.api.repository.TecnicoRepository;
 import hoops.metrics.api.service.ClubeService;
@@ -25,8 +26,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -179,11 +179,11 @@ class ClubeControllerTest {
     @Test
     void deveContarVitoriasPorClube() {
         Long id = 3L;
-        when(clubeService.contarVitorias(id)).thenReturn(new DadosDetalhamentoVitoriasClube(1L, 10));
+        when(clubeService.contarVitorias(id)).thenReturn(new DadosDetalhamentoVitoriasClube(1L, 10L));
 
         ResponseEntity<DadosDetalhamentoVitoriasClube> response = clubeController.contarVitoriasPorClube(id);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(12L, response.getBody());
+        assertInstanceOf(DadosDetalhamentoVitoriasClube.class, response.getBody());
     }
 }

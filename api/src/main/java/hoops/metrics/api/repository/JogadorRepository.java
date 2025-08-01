@@ -3,11 +3,14 @@ package hoops.metrics.api.repository;
 import hoops.metrics.api.dto.jogador.DadosGeraisJogador;
 import hoops.metrics.api.domain.Jogador;
 import hoops.metrics.api.dto.partida.DadosMvpPartida;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface JogadorRepository extends JpaRepository<Jogador, Long> {
 
@@ -96,4 +99,7 @@ public interface JogadorRepository extends JpaRepository<Jogador, Long> {
     int quantidadeDeVitoriasDoJogador(@Param("jogadorId") Long jogadorId);
 
     boolean existsByCpf(String cpf);
+
+
+    Page<Jogador> findAllByAtivoTrue(Pageable paginacao);
 }

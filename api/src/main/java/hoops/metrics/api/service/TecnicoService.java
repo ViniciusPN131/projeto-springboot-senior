@@ -2,10 +2,7 @@ package hoops.metrics.api.service;
 
 
 import hoops.metrics.api.domain.Tecnico;
-import hoops.metrics.api.dto.tecnico.DadosAtualizacaoTecnico;
-import hoops.metrics.api.dto.tecnico.DadosCadastroTecnico;
-import hoops.metrics.api.dto.tecnico.DadosDetalhamentoTecnico;
-import hoops.metrics.api.dto.tecnico.DadosListagemTecnico;
+import hoops.metrics.api.dto.tecnico.*;
 import hoops.metrics.api.repository.TecnicoRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -65,9 +62,9 @@ public class TecnicoService {
     }
 
 
-    public int contarVitorias(Long tecnicoId) {
+    public DadosDetalhamentoVitoriasTecnico contarVitorias(Long tecnicoId) {
 
-        return tecnicoRepository.contarVitorias(tecnicoId);
+        return new DadosDetalhamentoVitoriasTecnico(tecnicoId, tecnicoRepository.contarVitorias(tecnicoId));
 
     }
 }

@@ -1,6 +1,7 @@
 package hoops.metrics.api.repository;
 
 import hoops.metrics.api.domain.Tecnico;
+import hoops.metrics.api.dto.tecnico.DadosDetalhamentoVitoriasTecnico;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,7 +12,7 @@ public interface TecnicoRepository extends JpaRepository<Tecnico, Long> {
     Page<Tecnico> findAllByAtivoTrue(Pageable paginacao);
 
     @Query(value = """
-                SELECT COUNT(*) FROM partidas p
+                SELECT COUNT(*) AS qtdVitoriasTecnico FROM partidas p
                 JOIN clubes cm ON cm.id = p.clube_mandante_id
                 JOIN clubes cv ON cv.id = p.clube_visitante_id
                 WHERE (
@@ -43,7 +44,7 @@ public interface TecnicoRepository extends JpaRepository<Tecnico, Long> {
                     )
                 )
             """, nativeQuery = true)
-    int contarVitorias(@Param("tecnicoId") Long tecnicoId);
+    Long contarVitorias(@Param("tecnicoId") Long tecnicoId);
 
     boolean existsByCref(String cref);
 }

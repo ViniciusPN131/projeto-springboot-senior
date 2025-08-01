@@ -47,9 +47,9 @@ public class JogadorService {
 
     }
 
-    public Page listar(Pageable paginacao) {
+    public Page<DadosListagemJogador> listarAtivos(Pageable paginacao) {
 
-        return jogadorRepository.findAll(paginacao).map(DadosListagemJogador::new);
+        return jogadorRepository.findAllByAtivoTrue(paginacao).map(DadosListagemJogador::new);
 
     }
 

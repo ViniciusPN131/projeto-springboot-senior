@@ -12,7 +12,7 @@ public interface ClubeRepository extends JpaRepository<Clube, Long> {
     Page<Clube> findAllByAtivoTrue(Pageable paginacao);
 
     @Query(value = """
-                SELECT COUNT(*) AS qtdVitoriasClube, :clubeId AS clubeId FROM partidas p
+                SELECT COUNT(*) AS qtdVitoriasClube FROM partidas p
                 WHERE (
                     p.clube_mandante_id = :clubeId AND
                     (
@@ -42,7 +42,7 @@ public interface ClubeRepository extends JpaRepository<Clube, Long> {
                     )
                 )
             """, nativeQuery = true)
-    DadosDetalhamentoVitoriasClube contarVitoriasPorClube(@Param("clubeId") Long clubeId);
+    Long contarVitoriasPorClube(@Param("clubeId") Long clubeId);
 
     @Query(value = """
             
