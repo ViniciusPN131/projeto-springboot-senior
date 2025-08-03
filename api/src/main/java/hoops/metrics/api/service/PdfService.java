@@ -79,6 +79,7 @@ public class PdfService {
                 jogador.getData_nascimento().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")), textoDados);
         addTableCell(infoTable, "Altura", textoNegrito, jogador.getAltura() + " cm", textoDados);
         addTableCell(infoTable, "Peso", textoNegrito, jogador.getPeso() + " kg", textoDados);
+        addTableCell(infoTable, "Posicao", textoNegrito, jogador.getPosicao().toString(), textoDados);
         addTableCell(infoTable, "Time", textoNegrito, jogador.getClube().getNome(), textoDados);
         addTableCell(infoTable, "MVPs", textoNegrito, String.valueOf(estatisticasMvp.size()), textoDados);
         addTableCell(infoTable, "Vitórias", textoNegrito, String.valueOf(quantidadeDeVitorias), textoDados);

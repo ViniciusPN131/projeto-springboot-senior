@@ -7,24 +7,16 @@ import java.time.LocalDateTime;
 
 public record DadosListagemPartida(
         Long id,
-        Long timeCasa,
-        String timeCasaNome,
-        String timeCasaSigla,
-        Long timeVisitante,
-        String timeVisitanteNome,
-        String timeVisitanteSigla,
+        Clube timeCasa,
+        Clube timeVisitante,
         LocalDateTime dataHora,
         String local
 ) {
     public DadosListagemPartida(Partida partida) {
         this(
                 partida.getId(),
-                partida.getClubeDaCasa().getId(),
-                partida.getClubeDaCasa().getNome(),
-                partida.getClubeDaCasa().getSigla(),
-                partida.getClubeVisitante().getId(),
-                partida.getClubeVisitante().getNome(),
-                partida.getClubeVisitante().getSigla(),
+                partida.getClubeDaCasa(),
+                partida.getClubeVisitante(),
                 partida.getDataHora(),
                 partida.getLocal()
         );

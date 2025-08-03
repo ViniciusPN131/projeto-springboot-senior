@@ -6,7 +6,7 @@ import hoops.metrics.api.domain.Posicao;
 
 import java.time.LocalDate;
 
-public record DadosDetalhamentoJogador(Long id, String nome, float peso, int altura, Posicao posicao, LocalDate data_nascimento, Long clubeId, String clubeNome) {
+public record DadosDetalhamentoJogador(Long id, String nome, float peso, int altura, Posicao posicao, LocalDate data_nascimento, Clube clube) {
 
     public  DadosDetalhamentoJogador(Jogador jogador){
 
@@ -17,8 +17,7 @@ public record DadosDetalhamentoJogador(Long id, String nome, float peso, int alt
                 jogador.getAltura(),
                 jogador.getPosicao(),
                 jogador.getData_nascimento(),
-                jogador.getClube().getId(),
-                jogador.getClube().getNome()
+                jogador.getClube()
         );
 
     }

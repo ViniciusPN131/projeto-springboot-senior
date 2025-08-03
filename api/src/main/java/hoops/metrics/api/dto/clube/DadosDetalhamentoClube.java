@@ -3,7 +3,7 @@ package hoops.metrics.api.dto.clube;
 import hoops.metrics.api.domain.Clube;
 import hoops.metrics.api.domain.Tecnico;
 
-public record DadosDetalhamentoClube(Long id, String nome, String sigla, String cidade, String estado, Long tecnicoId, String tecnicoNome) {
+public record DadosDetalhamentoClube(Long id, String nome, String sigla, String cidade, String estado, Tecnico tecnico) {
 
     public DadosDetalhamentoClube(Clube clube) {
 
@@ -13,8 +13,7 @@ public record DadosDetalhamentoClube(Long id, String nome, String sigla, String 
                 clube.getSigla(),
                 clube.getCidade(),
                 clube.getEstado(),
-                clube.getTecnico().getId(),
-                clube.getTecnico().getNome()
+                clube.getTecnico()
         );
 
     }
